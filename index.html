@@ -3,448 +3,478 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MATE & PUNTO 🧉 — Gestión Premium</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<title>MATE & PUNTO 🧉 — Gestión v3.0</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #1a1612; --surface: #24201b; --surface2: #2e2923; --border: #3d352c;
+  --bg: #13110f; --surface: #1c1915; --surface2: #26221c; --border: #363028;
   --primary: #0d3d28; --primary-light: #1b5e3d; --accent: #d9c5a3;
-  --text: #fdf5e6; --text-dim: #a89a8e; --red: #8b3a3a; --green: #42e091;
-  --radius: 12px; --font-display: 'DM Serif Display', serif; --font-mono: 'DM Mono', monospace;
+  --text: #fdf5e6; --text-dim: #a89a8e; --red: #a33b3b; --green: #42e091;
+  --radius: 14px; --font-display: 'DM Serif Display', serif; --font-mono: 'DM Mono', monospace;
 }
+
+/* Reset y Base */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:var(--font-mono);font-size:13px;line-height:1.6; min-height: 100vh;}
-header{padding:15px 20px;background:var(--primary);border-bottom:3px solid var(--accent);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
-.logo-text{font-family:var(--font-display);font-size:22px;color:var(--accent);text-transform:uppercase}
-nav{display:flex;gap:5px;background:rgba(0,0,0,0.2);padding:5px;border-radius:10px}
-.nav-btn{background:none;border:none;color:var(--accent);padding:8px 12px;border-radius:8px;cursor:pointer;font-size:11px}
-.nav-btn.active{background:var(--accent);color:var(--primary);font-weight:bold}
-main{padding:20px;max-width:1000px;margin:0 auto}
-.view{display:none}.view.active{display:block}
-.cards-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:15px;margin-bottom:25px}
-.stat-card{background:var(--surface);border:1px solid var(--border);padding:15px;border-radius:var(--radius);border-left:4px solid var(--accent)}
-.stat-label{color:var(--text-dim);font-size:10px;text-transform:uppercase;margin-bottom:5px}
-.stat-value{font-family:var(--font-display);font-size:24px;color:var(--accent)}
-.btn{background:var(--primary);border:1px solid var(--accent);color:var(--accent);padding:8px 16px;border-radius:8px;cursor:pointer;font-family:var(--font-mono);font-size:11px; transition: 0.2s;}
-.btn:active{transform: scale(0.98);}
-.btn.secondary{background:var(--surface2);border-color:var(--border);color:var(--text-dim)}
-.btn.danger{border-color:var(--red);color:var(--red);background:transparent}
-.producto-img{width:100%;height:150px;object-fit:cover;border-radius:8px;margin-bottom:10px;background:var(--bg)}
-.productos-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:15px}
-.card{background:var(--surface);border:1px solid var(--border);padding:15px;border-radius:var(--radius);position:relative}
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:1000;align-items:center;justify-content:center;backdrop-filter:blur(4px); padding: 20px;}
-.modal-overlay.open{display:flex}
-.modal{background:var(--surface);border:1px solid var(--accent);padding:25px;border-radius:15px;width:100%;max-width:450px;max-height:90vh;overflow-y:auto}
-input,select,textarea{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:10px;border-radius:8px;margin-top:5px;margin-bottom:12px;font-family:var(--font-mono); outline: none;}
-input:focus{border-color: var(--accent);}
-#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--accent);color:var(--primary);padding:10px 20px;border-radius:30px;display:none;z-index:2000; font-weight: bold;}
-.loading-overlay{position:fixed;inset:0;background:var(--bg);display:none;align-items:center;justify-content:center;z-index:3000;flex-direction:column;gap:10px;}
+body{background:var(--bg);color:var(--text);font-family:var(--font-mono);font-size:13px;line-height:1.6;overflow-x:hidden}
+
+/* Layout Principal */
+header {
+    padding: 15px 25px; background: var(--primary); border-bottom: 2px solid var(--accent);
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+}
+.logo { font-family: var(--font-display); font-size: 24px; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
+
+nav { display: flex; gap: 8px; background: rgba(0,0,0,0.3); padding: 6px; border-radius: 12px; }
+.nav-btn {
+    background: none; border: none; color: var(--text-dim); padding: 8px 16px;
+    border-radius: 8px; cursor: pointer; font-family: var(--font-mono); font-size: 11px;
+    transition: 0.3s;
+}
+.nav-btn.active { background: var(--accent); color: var(--primary); font-weight: bold; }
+.nav-btn:hover:not(.active) { color: var(--text); background: var(--surface2); }
+
+main { padding: 25px; max-width: 1100px; margin: 0 auto; min-height: 80vh; }
+.view { display: none; animation: fadeIn 0.4s ease forwards; }
+.view.active { display: block; }
+@keyframes fadeIn { from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:translateY(0)} }
+
+/* Cards */
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; }
+.card { 
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 20px; position: relative; transition: 0.3s;
+}
+.card:hover { border-color: var(--accent); transform: translateY(-3px); }
+
+.prod-img { 
+    width: 100%; height: 160px; object-fit: cover; border-radius: 10px; 
+    margin-bottom: 15px; background: var(--bg); border: 1px solid var(--border);
+}
+
+.price { font-family: var(--font-display); font-size: 20px; color: var(--accent); margin: 5px 0; }
+
+/* Botones */
+.btn {
+    background: var(--primary); color: var(--accent); border: 1px solid var(--accent);
+    padding: 10px 20px; border-radius: 10px; cursor: pointer; font-family: var(--font-mono);
+    font-size: 12px; transition: 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+}
+.btn:hover { background: var(--accent); color: var(--primary); }
+.btn.sec { background: var(--surface2); border-color: var(--border); color: var(--text-dim); }
+.btn.danger { border-color: var(--red); color: var(--red); background: transparent; }
+.btn.danger:hover { background: var(--red); color: white; }
+
+/* Modales Mejorados */
+.modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.9); 
+    display: none; align-items: center; justify-content: center; z-index: 2000;
+    backdrop-filter: blur(8px); padding: 20px;
+}
+.modal-overlay.active { display: flex; }
+.modal {
+    background: var(--surface); border: 2px solid var(--accent); padding: 30px;
+    border-radius: 20px; width: 100%; max-width: 480px; position: relative;
+    box-shadow: 0 10px 50px rgba(0,0,0,1);
+}
+.close-modal {
+    position: absolute; top: 15px; right: 15px; background: none; border: none;
+    color: var(--text-dim); font-size: 20px; cursor: pointer;
+}
+
+/* Inputs */
+label { display: block; font-size: 10px; text-transform: uppercase; color: var(--accent); margin-bottom: 5px; margin-top: 10px; }
+input, select, textarea {
+    width: 100%; background: var(--bg); border: 1px solid var(--border);
+    color: var(--text); padding: 12px; border-radius: 10px; font-family: var(--font-mono);
+    outline: none; transition: 0.3s;
+}
+input:focus { border-color: var(--accent); }
+
+/* Stats */
+.stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px; }
+.stat-box { background: var(--surface); padding: 20px; border-radius: var(--radius); border-left: 4px solid var(--accent); }
+
+#toast {
+    position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+    background: var(--accent); color: var(--primary); padding: 12px 25px;
+    border-radius: 50px; font-weight: bold; z-index: 3000; display: none;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.4);
+}
 </style>
 </head>
 <body>
 
-<div id="loading" class="loading-overlay">Sincronizando con la nube...</div>
-
-<div id="setup-screen" style="position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:2000;padding:20px;">
+<div id="setup-screen" style="position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:4000;">
     <div class="modal" style="text-align:center">
-        <h2 style="font-family:var(--font-display);color:var(--accent);margin-bottom:10px">MATE & PUNTO</h2>
-        <p style="color:var(--text-dim);margin-bottom:20px">Configuración inicial del Token GitHub</p>
-        <input type="password" id="setup-token" placeholder="ghp_xxxxxxxxxxxx">
-        <button class="btn" style="width:100%" onclick="inicializarConToken()">Conectar y Empezar →</button>
+        <div class="logo" style="font-size:32px; margin-bottom:10px">Mate & Punto</div>
+        <p style="color:var(--text-dim); margin-bottom:25px">Gestión de Inventario Cloud</p>
+        <input type="password" id="gh-token" placeholder="Pega tu GitHub Token aquí...">
+        <button class="btn" style="width:100%; margin-top:15px" onclick="iniciarConToken()">Conectar Sistema →</button>
     </div>
 </div>
 
 <header id="app-header" style="display:none">
-    <div class="logo-text">Mate & Punto</div>
-    <div style="display:flex;gap:10px">
-        <nav>
-            <button class="nav-btn active" onclick="showView('dashboard')">Panel</button>
-            <button class="nav-btn" onclick="showView('stock')">Stock</button>
-            <button class="nav-btn" onclick="showView('combos')">Combos</button>
-            <button class="nav-btn" onclick="showView('ventas')">Finanzas</button>
-        </nav>
-        <button class="btn secondary" onclick="exportarCSV()">📥 Backup</button>
-    </div>
+    <div class="logo">Mate & Punto</div>
+    <nav>
+        <button class="nav-btn active" onclick="switchView('dashboard', this)">Panel</button>
+        <button class="nav-btn" onclick="switchView('stock', this)">Stock</button>
+        <button class="nav-btn" onclick="switchView('combos', this)">Combos</button>
+        <button class="nav-btn" onclick="switchView('ventas', this)">Ventas</button>
+    </nav>
+    <button class="btn sec" onclick="exportarCSV()">CSV</button>
 </header>
 
 <main id="app-main" style="display:none">
     <div class="view active" id="view-dashboard">
-        <div class="cards-grid">
-            <div class="stat-card"><div class="stat-label">Ventas Hoy</div><div class="stat-value" id="stat-ventas-hoy">$0</div></div>
-            <div class="stat-card"><div class="stat-label">Ganancia Real</div><div class="stat-value" id="stat-ganancia-hoy" style="color:var(--green)">$0</div></div>
-            <div class="stat-card"><div class="stat-label">Gastos Extra</div><div class="stat-value" id="stat-gastos-hoy" style="color:var(--red)">$0</div></div>
+        <div class="stats-row">
+            <div class="stat-box">
+                <div style="font-size:10px; color:var(--text-dim)">GANANCIA HOY</div>
+                <div class="price" id="stat-ganancia" style="color:var(--green)">$0</div>
+            </div>
+            <div class="stat-box">
+                <div style="font-size:10px; color:var(--text-dim)">STOCK VALORIZADO</div>
+                <div class="price" id="stat-stock-val">$0</div>
+            </div>
         </div>
-        <div style="display:flex;gap:15px;margin-bottom:25px">
-            <button class="btn" onclick="openModalVenta()">+ Nueva Venta</button>
-            <button class="btn secondary" onclick="openModalGasto()">+ Gasto Extra</button>
+        <div style="display:flex; gap:10px; margin-bottom:30px">
+            <button class="btn" onclick="openModal('modal-venta')">⚡ Nueva Venta</button>
+            <button class="btn sec" onclick="openModal('modal-gasto')">💸 Gasto Extra</button>
         </div>
-        <h3 style="color:var(--accent);margin-bottom:10px;font-family:var(--font-display)">Alertas de Stock</h3>
-        <div id="alertas-stock"></div>
+        <h3 style="font-family:var(--font-display); color:var(--accent); margin-bottom:15px">Alertas Críticas</h3>
+        <div id="dashboard-alertas"></div>
     </div>
 
     <div class="view" id="view-stock">
-        <div style="display:flex;justify-content:space-between;margin-bottom:20px">
-            <h2 style="font-family:var(--font-display)">Inventario</h2>
-            <button class="btn" onclick="openModalItem()">+ Nuevo Producto</button>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:25px">
+            <h2 style="font-family:var(--font-display)">Inventario Real</h2>
+            <button class="btn" onclick="openModal('modal-item')">+ Agregar Producto</button>
         </div>
-        <div class="productos-grid" id="stock-grid"></div>
+        <div class="grid" id="stock-grid"></div>
     </div>
 
     <div class="view" id="view-combos">
-        <div style="display:flex;justify-content:space-between;margin-bottom:20px">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:25px">
             <h2 style="font-family:var(--font-display)">Gestión de Combos</h2>
-            <button class="btn" onclick="openModalCombo()">+ Crear Combo</button>
+            <button class="btn" onclick="openModal('modal-combo')">+ Crear Combo</button>
         </div>
-        <div class="productos-grid" id="combos-grid"></div>
+        <div class="grid" id="combos-grid"></div>
     </div>
 
     <div class="view" id="view-ventas">
-        <h2 style="font-family:var(--font-display);margin-bottom:20px">Historial de Operaciones</h2>
-        <div id="historial-mezclado"></div>
+        <h2 style="font-family:var(--font-display); margin-bottom:25px">Historial Financiero</h2>
+        <div id="historial-lista"></div>
     </div>
 </main>
 
 <div class="modal-overlay" id="modal-item">
     <div class="modal">
-        <h3 style="color:var(--accent);margin-bottom:15px">Producto</h3>
-        <label>Nombre</label><input type="text" id="item-nombre">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-            <div><label>Costo</label><input type="number" id="item-costo"></div>
-            <div><label>Venta</label><input type="number" id="item-venta"></div>
+        <button class="close-modal" onclick="closeAllModals()">×</button>
+        <h3 style="font-family:var(--font-display); color:var(--accent)">Nuevo Producto</h3>
+        <label>Nombre del producto</label>
+        <input type="text" id="in-item-nombre" placeholder="Ej: Mate Imperial">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px">
+            <div><label>Costo</label><input type="number" id="in-item-costo"></div>
+            <div><label>Venta</label><input type="number" id="in-item-venta"></div>
         </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-            <div><label>Stock Actual</label><input type="number" id="item-qty"></div>
-            <div><label>Mínimo Alerta</label><input type="number" id="item-min" value="2"></div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px">
+            <div><label>Cantidad</label><input type="number" id="in-item-qty"></div>
+            <div><label>Stock Mínimo</label><input type="number" id="in-item-min" value="2"></div>
         </div>
-        <div style="display:flex;gap:10px;margin-top:10px">
-            <button class="btn secondary" style="flex:1" onclick="closeModal('modal-item')">Cancelar</button>
-            <button class="btn" style="flex:1" onclick="guardarItem()">Guardar</button>
-        </div>
-    </div>
-</div>
-
-<div class="modal-overlay" id="modal-combo">
-    <div class="modal">
-        <h3 style="color:var(--accent);margin-bottom:15px">Nuevo Combo</h3>
-        <label>Nombre del Combo</label><input type="text" id="combo-nombre">
-        <label>Productos (Ctrl + Click para varios)</label>
-        <select id="combo-items-select" multiple style="height:120px"></select>
-        <label>Precio Final Combo</label><input type="number" id="combo-venta">
-        <div style="display:flex;gap:10px">
-            <button class="btn secondary" style="flex:1" onclick="closeModal('modal-combo')">Cancelar</button>
-            <button class="btn" style="flex:1" onclick="guardarCombo()">Guardar</button>
-        </div>
+        <button class="btn" style="width:100%; margin-top:20px" onclick="api.guardarItem()">Guardar en Stock</button>
     </div>
 </div>
 
 <div class="modal-overlay" id="modal-venta">
     <div class="modal">
-        <h3 style="color:var(--accent);margin-bottom:15px">Registrar Venta</h3>
-        <label>¿Qué vendiste?</label>
-        <select id="venta-tipo" onchange="actualizarSelectorVenta()">
-            <option value="producto">Producto Individual</option>
-            <option value="combo">Combo</option>
-        </select>
-        <label>Seleccionar ítem</label>
-        <select id="venta-target-id"></select>
-        <label>Notas (Cliente, IG, etc.)</label>
-        <textarea id="venta-desc" rows="2"></textarea>
-        <button class="btn" style="width:100%" onclick="confirmarVenta()">Confirmar Venta</button>
+        <button class="close-modal" onclick="closeAllModals()">×</button>
+        <h3 style="font-family:var(--font-display); color:var(--accent)">Registrar Venta</h3>
+        <label>Tipo</label>
+        <select id="in-v-tipo" onchange="actualizarSelectoresVenta()"><option value="p">Producto</option><option value="c">Combo</option></select>
+        <label>Seleccionar Ítem</label>
+        <select id="in-v-id"></select>
+        <label>Notas adicionales</label>
+        <textarea id="in-v-nota" rows="2"></textarea>
+        <button class="btn" style="width:100%; margin-top:20px" onclick="api.confirmarVenta()">Cobrar Ahora</button>
     </div>
 </div>
 
 <div class="modal-overlay" id="modal-gasto">
     <div class="modal">
-        <h3 style="color:var(--accent);margin-bottom:15px">Gasto Extra</h3>
-        <label>Concepto</label><input type="text" id="gasto-nombre">
-        <label>Monto $</label><input type="number" id="gasto-monto">
-        <button class="btn danger" style="width:100%;background:var(--red);color:white" onclick="guardarGasto()">Registrar</button>
+        <button class="close-modal" onclick="closeAllModals()">×</button>
+        <h3 style="color:var(--red)">Gasto Extra</h3>
+        <label>Concepto</label><input type="text" id="in-g-nombre">
+        <label>Monto</label><input type="number" id="in-g-monto">
+        <button class="btn danger" style="width:100%; margin-top:20px" onclick="api.guardarGasto()">Registrar Gasto</button>
+    </div>
+</div>
+
+<div class="modal-overlay" id="modal-combo">
+    <div class="modal">
+        <button class="close-modal" onclick="closeAllModals()">×</button>
+        <h3>Crear Combo</h3>
+        <label>Nombre</label><input type="text" id="in-c-nombre">
+        <label>Productos (Manten Ctrl)</label>
+        <select id="in-c-items" multiple style="height:100px"></select>
+        <label>Precio Combo</label><input type="number" id="in-c-venta">
+        <button class="btn" style="width:100%; margin-top:20px" onclick="api.guardarCombo()">Guardar Combo</button>
     </div>
 </div>
 
 <div id="toast"></div>
 
 <script>
+// =============================================
+// MOTOR DE DATOS (API LOCAL + NUBE)
+// =============================================
 let DB = { items: [], combos: [], ventas: [], gastos: [] };
-const LS_TOKEN = 'mp_token', LS_GIST = 'mp_gist';
-const fmt = n => '$' + parseFloat(n||0).toLocaleString('es-AR');
+const LS_TOKEN = 'mp_token_v3', LS_GIST = 'mp_gist_v3';
+
+const api = {
+    async sync() {
+        const t = localStorage.getItem(LS_TOKEN), g = localStorage.getItem(LS_GIST);
+        if(!t || !g) return;
+        try {
+            await fetch(`https://api.github.com/gists/${g}`, {
+                method: 'PATCH',
+                headers: { Authorization: `token ${t}` },
+                body: JSON.stringify({ files: { 'mate.json': { content: JSON.stringify(DB) } } })
+            });
+            renderAll();
+            msg("Sincronizado ✅");
+        } catch(e) { msg("Error de conexión ❌"); }
+    },
+
+    guardarItem() {
+        const item = {
+            id: Date.now().toString(),
+            nombre: val('in-item-nombre'),
+            costo: num('in-item-costo'),
+            venta: num('in-item-venta'),
+            qty: num('in-item-qty'),
+            min: num('in-item-min')
+        };
+        if(!item.nombre) return alert("Nombre requerido");
+        DB.items.push(item);
+        closeAllModals();
+        this.sync();
+    },
+
+    borrarItem(id) {
+        if(!confirm("¿Eliminar producto?")) return;
+        DB.items = DB.items.filter(i => i.id !== id);
+        this.sync();
+    },
+
+    guardarCombo() {
+        const sel = document.getElementById('in-c-items');
+        const ids = [...sel.selectedOptions].map(o => o.value);
+        DB.combos.push({
+            id: 'c'+Date.now(),
+            nombre: val('in-c-nombre'),
+            items: ids,
+            venta: num('in-c-venta')
+        });
+        closeAllModals();
+        this.sync();
+    },
+
+    confirmarVenta() {
+        const tipo = val('in-v-tipo');
+        const targetId = val('in-v-id');
+        let venta = { id: Date.now(), fecha: new Date().toISOString(), nota: val('in-v-nota') };
+
+        if(tipo === 'p') {
+            const it = DB.items.find(i => i.id === targetId);
+            if(!it || it.qty < 1) return alert("Sin stock");
+            it.qty--;
+            venta.nombre = it.nombre; venta.total = it.venta; venta.costo = it.costo;
+        } else {
+            const co = DB.combos.find(c => c.id === targetId);
+            let cTotal = 0;
+            co.items.forEach(id => {
+                const it = DB.items.find(i => i.id === id);
+                if(it) { it.qty--; cTotal += it.costo; }
+            });
+            venta.nombre = "Combo: "+co.nombre; venta.total = co.venta; venta.costo = cTotal;
+        }
+        DB.ventas.push(venta);
+        closeAllModals();
+        this.sync();
+    },
+
+    guardarGasto() {
+        DB.gastos.push({ id: Date.now(), fecha: new Date().toISOString(), nombre: val('in-g-nombre'), monto: num('in-g-monto') });
+        closeAllModals();
+        this.sync();
+    },
+
+    borrarRegistro(id, tipo) {
+        if(!confirm("¿Borrar registro financiero?")) return;
+        if(tipo === 'v') DB.ventas = DB.ventas.filter(v => v.id !== id);
+        else DB.gastos = DB.gastos.filter(g => g.id !== id);
+        this.sync();
+    }
+};
 
 // =============================================
-// NUBE Y PERSISTENCIA
+// RENDERIZADO DE INTERFAZ
 // =============================================
-async function inicializarConToken() {
-    const token = document.getElementById('setup-token').value.trim();
+function renderAll() {
+    renderDashboard();
+    renderStock();
+    renderCombos();
+    renderFinanzas();
+}
+
+function renderDashboard() {
+    const hoy = new Date().toDateString();
+    const vHoy = DB.ventas.filter(v => new Date(v.fecha).toDateString() === hoy);
+    const gHoy = DB.gastos.filter(g => new Date(g.fecha).toDateString() === hoy);
+    
+    const ganancia = vHoy.reduce((a,b) => a + (b.total - b.costo), 0) - gHoy.reduce((a,b) => a + b.monto, 0);
+    const stockVal = DB.items.reduce((a,b) => a + (b.costo * b.qty), 0);
+
+    setTxt('stat-ganancia', fmt(ganancia));
+    setTxt('stat-stock-val', fmt(stockVal));
+
+    const alertas = DB.items.filter(i => i.qty <= i.min);
+    setHtml('dashboard-alertas', alertas.map(i => `
+        <div class="card" style="margin-bottom:10px; padding:12px; display:flex; justify-content:space-between">
+            <span>${i.nombre}</span>
+            <span style="color:var(--red)">Quedan ${i.qty}</span>
+        </div>
+    `).join('') || '<p>Todo ok ✅</p>');
+}
+
+function renderStock() {
+    const grid = document.getElementById('stock-grid');
+    grid.innerHTML = DB.items.map(i => `
+        <div class="card">
+            <img src="img/${i.nombre.toLowerCase().replace(/ /g,'-')}.jpg" class="prod-img" onerror="this.src='https://via.placeholder.com/200/1c1915/d9c5a3?text=${i.nombre[0]}'">
+            <div style="font-weight:bold">${i.nombre}</div>
+            <div class="price">${fmt(i.venta)}</div>
+            <div style="font-size:10px; color:var(--text-dim)">Costo: ${fmt(i.costo)} | Stock: ${i.qty}</div>
+            <div style="margin-top:15px; display:flex; gap:5px">
+                <button class="btn sec" style="flex:1" onclick="msg('Próximamente editar')">Editar</button>
+                <button class="btn danger" onclick="api.borrarItem('${i.id}')">🗑</button>
+            </div>
+        </div>
+    `).join('');
+}
+
+function renderCombos() {
+    setHtml('combos-grid', DB.combos.map(c => `
+        <div class="card">
+            <div style="font-weight:bold">${c.nombre}</div>
+            <div class="price">${fmt(c.venta)}</div>
+            <div style="font-size:10px; color:var(--text-dim)">Contiene ${c.items.length} productos</div>
+            <button class="btn danger" style="width:100%; margin-top:10px" onclick="api.borrarCombo('${c.id}')">Eliminar Combo</button>
+        </div>
+    `).join(''));
+}
+
+function renderFinanzas() {
+    const all = [
+        ...DB.ventas.map(v => ({...v, tipo: 'v'})),
+        ...DB.gastos.map(g => ({...g, tipo: 'g', total: g.monto, costo: 0}))
+    ].sort((a,b) => new Date(b.fecha) - new Date(a.fecha));
+
+    setHtml('historial-lista', all.map(x => `
+        <div class="card" style="margin-bottom:10px; border-left: 5px solid ${x.tipo==='v'?'var(--green)':'var(--red)'}">
+            <div style="display:flex; justify-content:space-between">
+                <div>
+                    <div style="font-weight:bold">${x.nombre}</div>
+                    <div style="font-size:10px; color:var(--text-dim)">${new Date(x.fecha).toLocaleString()} - ${x.nota || ''}</div>
+                </div>
+                <div style="text-align:right">
+                    <div style="font-weight:bold; color:${x.tipo==='v'?'var(--green)':'var(--red)'}">${x.tipo==='v'?'+':'-'}${fmt(x.total)}</div>
+                    <button class="nav-btn" onclick="api.borrarRegistro(${x.id}, '${x.tipo}')">Eliminar</button>
+                </div>
+            </div>
+        </div>
+    `).join(''));
+}
+
+// =============================================
+// UTILIDADES Y NAVEGACIÓN
+// =============================================
+function switchView(id, btn) {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('view-'+id).classList.add('active');
+    btn.classList.add('active');
+}
+
+function openModal(id) { 
+    document.getElementById(id).classList.add('active');
+    if(id === 'modal-venta') actualizarSelectoresVenta();
+    if(id === 'modal-combo') {
+        document.getElementById('in-c-items').innerHTML = DB.items.map(i => `<option value="${i.id}">${i.nombre}</option>`).join('');
+    }
+}
+
+function closeAllModals() { document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active')); }
+
+function actualizarSelectoresVenta() {
+    const tipo = val('in-v-tipo');
+    const s = document.getElementById('in-v-id');
+    s.innerHTML = (tipo === 'p' ? DB.items : DB.combos).map(x => `<option value="${x.id}">${x.nombre}</option>`).join('');
+}
+
+const fmt = n => '$' + parseFloat(n||0).toLocaleString('es-AR');
+const val = id => document.getElementById(id).value;
+const num = id => parseFloat(val(id)) || 0;
+const setTxt = (id, txt) => document.getElementById(id).textContent = txt;
+const setHtml = (id, html) => document.getElementById(id).innerHTML = html;
+
+function msg(m) {
+    const t = document.getElementById('toast');
+    t.textContent = m; t.style.display = 'block';
+    setTimeout(() => t.style.display = 'none', 2000);
+}
+
+// Tecla ESC para salir de cualquier opción
+window.onkeydown = e => { if(e.key === 'Escape') closeAllModals(); };
+
+async function iniciarConToken() {
+    const token = val('gh-token').trim();
     if(!token) return;
-    toggleLoading(true);
     try {
         const res = await fetch('https://api.github.com/gists', {
             method: 'POST',
             headers: { Authorization: `token ${token}` },
-            body: JSON.stringify({
-                description: "Mate y Punto DB",
-                public: false,
-                files: { "mate.json": { content: JSON.stringify(DB) } }
-            })
+            body: JSON.stringify({ description: "M&P DB", public: false, files: { "mate.json": { content: JSON.stringify(DB) } } })
         });
         const data = await res.json();
         if(res.ok) {
             localStorage.setItem(LS_TOKEN, token);
             localStorage.setItem(LS_GIST, data.id);
             location.reload();
-        } else { alert("Token inválido."); }
-    } catch(e) { alert("Error de conexión."); }
-    toggleLoading(false);
-}
-
-async function sync() {
-    const t = localStorage.getItem(LS_TOKEN), g = localStorage.getItem(LS_GIST);
-    if (!t || !g) return;
-    try {
-        await fetch(`https://api.github.com/gists/${g}`, {
-            method: 'PATCH',
-            headers: { Authorization: `token ${t}` },
-            body: JSON.stringify({ files: { 'mate.json': { content: JSON.stringify(DB) } } })
-        });
-        showToast("Sincronizado ✅");
-        renderAll();
-    } catch(e) { showToast("Error al guardar ❌"); }
-}
-
-// =============================================
-// LÓGICA DE NEGOCIO
-// =============================================
-
-function guardarItem() {
-    const item = {
-        id: Date.now().toString(),
-        nombre: document.getElementById('item-nombre').value,
-        costo: parseFloat(document.getElementById('item-costo').value) || 0,
-        venta: parseFloat(document.getElementById('item-venta').value) || 0,
-        cantidad: parseInt(document.getElementById('item-qty').value) || 0,
-        min: parseInt(document.getElementById('item-min').value) || 2
-    };
-    if(!item.nombre) return alert("Nombre obligatorio");
-    DB.items.push(item);
-    closeModal('modal-item');
-    sync();
-}
-
-function eliminarItem(id) {
-    if(confirm("¿Eliminar del stock?")) { DB.items = DB.items.filter(i => i.id !== id); sync(); }
-}
-
-function guardarCombo() {
-    const select = document.getElementById('combo-items-select');
-    const ids = Array.from(select.selectedOptions).map(opt => opt.value);
-    const combo = {
-        id: 'c' + Date.now(),
-        nombre: document.getElementById('combo-nombre').value,
-        itemIds: ids,
-        venta: parseFloat(document.getElementById('combo-venta').value) || 0
-    };
-    if(!combo.nombre || ids.length === 0) return alert("Completa el nombre e ítems");
-    DB.combos.push(combo);
-    closeModal('modal-combo');
-    sync();
-}
-
-function eliminarCombo(id) {
-    if(confirm("¿Eliminar combo?")) { DB.combos = DB.combos.filter(c => c.id !== id); sync(); }
-}
-
-function confirmarVenta() {
-    const tipo = document.getElementById('venta-tipo').value;
-    const targetId = document.getElementById('venta-target-id').value;
-    if(!targetId) return alert("Selecciona un ítem");
-
-    let vData = { id: Date.now(), fecha: new Date().toISOString(), desc: document.getElementById('venta-desc').value };
-
-    if(tipo === 'producto') {
-        const it = DB.items.find(i => i.id === targetId);
-        if(!it || it.cantidad < 1) return alert("Sin stock suficiente");
-        it.cantidad--;
-        vData.nombre = it.nombre;
-        vData.total = it.venta;
-        vData.costo = it.costo;
-    } else {
-        const co = DB.combos.find(c => c.id === targetId);
-        let costoTotal = 0;
-        let sinStock = false;
-        co.itemIds.forEach(id => {
-            const it = DB.items.find(i => i.id === id);
-            if(it && it.cantidad > 0) { it.cantidad--; costoTotal += it.costo; }
-            else { sinStock = true; }
-        });
-        if(sinStock) return alert("Uno de los productos del combo no tiene stock");
-        vData.nombre = "COMBO: " + co.nombre;
-        vData.total = co.venta;
-        vData.costo = costoTotal;
-    }
-
-    DB.ventas.push(vData);
-    closeModal('modal-venta');
-    sync();
-}
-
-function guardarGasto() {
-    const gasto = {
-        id: Date.now(),
-        fecha: new Date().toISOString(),
-        nombre: document.getElementById('gasto-nombre').value,
-        monto: parseFloat(document.getElementById('gasto-monto').value) || 0
-    };
-    if(!gasto.nombre) return alert("Concepto obligatorio");
-    DB.gastos.push(gasto);
-    closeModal('modal-gasto');
-    sync();
-}
-
-function eliminarRegistro(id, tipo) {
-    if(!confirm("¿Eliminar este registro?")) return;
-    if(tipo === 'venta') DB.ventas = DB.ventas.filter(v => v.id !== id);
-    else DB.gastos = DB.gastos.filter(g => g.id !== id);
-    sync();
-}
-
-// =============================================
-// RENDERERS
-// =============================================
-
-function renderAll() {
-    // Stats
-    const hoy = new Date().toDateString();
-    const vHoy = DB.ventas.filter(v => new Date(v.fecha).toDateString() === hoy);
-    const gHoy = DB.gastos.filter(g => new Date(g.fecha).toDateString() === hoy);
-    const ingresos = vHoy.reduce((a,b) => a + b.total, 0);
-    const costos = vHoy.reduce((a,b) => a + b.costo, 0);
-    const extras = gHoy.reduce((a,b) => a + b.monto, 0);
-
-    document.getElementById('stat-ventas-hoy').textContent = fmt(ingresos);
-    document.getElementById('stat-ganancia-hoy').textContent = fmt(ingresos - costos - extras);
-    document.getElementById('stat-gastos-hoy').textContent = fmt(extras);
-
-    // Alertas Stock
-    const alertas = DB.items.filter(i => i.cantidad <= i.min);
-    document.getElementById('alertas-stock').innerHTML = alertas.length ? alertas.map(i => `
-        <div class="card" style="margin-bottom:8px; padding:12px; display:flex; justify-content:space-between; align-items:center;">
-            <span>${i.nombre}</span>
-            <span style="color:var(--red); font-weight:bold;">${i.cantidad === 0 ? 'AGOTADO' : 'STOCK: ' + i.cantidad}</span>
-        </div>
-    `).join('') : '<p style="color:var(--text-dim)">Stock saludable ✅</p>';
-
-    // Stock Grid
-    document.getElementById('stock-grid').innerHTML = DB.items.map(i => {
-        const fileName = i.nombre.toLowerCase().trim().replace(/ /g, '-');
-        return `
-        <div class="card">
-            <img src="img/${fileName}.jpg" class="producto-img" onerror="this.src='https://via.placeholder.com/150/1a1612/d9c5a3?text=${i.nombre.substring(0,1)}'">
-            <div style="font-weight:bold;color:var(--accent)">${i.nombre}</div>
-            <div style="font-size:16px;margin:5px 0">${fmt(i.venta)}</div>
-            <div style="font-size:10px;color:var(--text-dim)">Disponibles: ${i.cantidad}</div>
-            <button class="btn danger" style="width:100%;margin-top:10px;padding:5px" onclick="eliminarItem('${i.id}')">Eliminar</button>
-        </div>`;
-    }).join('');
-
-    // Combos Grid
-    document.getElementById('combos-grid').innerHTML = DB.combos.map(c => `
-        <div class="card">
-            <div style="font-weight:bold;color:var(--accent)">${c.nombre}</div>
-            <div style="font-size:14px;margin:5px 0">${fmt(c.venta)}</div>
-            <div style="font-size:9px;color:var(--text-dim)">Contiene ${c.itemIds.length} ítems</div>
-            <button class="btn danger" style="width:100%;margin-top:10px;padding:5px" onclick="eliminarCombo('${c.id}')">Eliminar</button>
-        </div>
-    `).join('');
-
-    // Historial
-    const fusion = [
-        ...DB.ventas.map(v => ({...v, tipo: 'venta'})),
-        ...DB.gastos.map(g => ({...g, tipo: 'gasto', total: g.monto}))
-    ].sort((a,b) => new Date(b.fecha) - new Date(a.fecha));
-
-    document.getElementById('historial-mezclado').innerHTML = fusion.map(x => `
-        <div class="card" style="margin-bottom:10px; border-left: 5px solid ${x.tipo === 'venta' ? 'var(--green)' : 'var(--red)'}">
-            <div style="display:flex; justify-content:space-between">
-                <div>
-                    <span style="font-size:9px; color:var(--accent)">${new Date(x.fecha).toLocaleDateString()}</span>
-                    <div style="font-weight:bold">${x.nombre}</div>
-                    <div style="font-size:10px; color:var(--text-dim)">${x.desc || ''}</div>
-                </div>
-                <div style="text-align:right">
-                    <div style="font-weight:bold; color:${x.tipo === 'venta' ? 'var(--green)' : 'var(--red)'}">
-                        ${x.tipo === 'venta' ? '+' : '-'}${fmt(x.total)}
-                    </div>
-                    <button onclick="eliminarRegistro(${x.id}, '${x.tipo}')" style="background:none;border:none;color:var(--red);font-size:10px;cursor:pointer;margin-top:5px">Eliminar</button>
-                </div>
-            </div>
-        </div>
-    `).join('');
-}
-
-// =============================================
-// HELPERS UI
-// =============================================
-function showView(id) {
-    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById('view-' + id).classList.add('active');
-    event.target.classList.add('active');
-}
-
-function openModalItem() { document.getElementById('modal-item').classList.add('open'); }
-function openModalGasto() { document.getElementById('modal-gasto').classList.add('open'); }
-function openModalVenta() { actualizarSelectorVenta(); document.getElementById('modal-venta').classList.add('open'); }
-function openModalCombo() { 
-    const s = document.getElementById('combo-items-select');
-    s.innerHTML = DB.items.map(i => `<option value="${i.id}">${i.nombre}</option>`).join('');
-    document.getElementById('modal-combo').classList.add('open'); 
-}
-function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-
-function actualizarSelectorVenta() {
-    const tipo = document.getElementById('venta-tipo').value;
-    const s = document.getElementById('venta-target-id');
-    s.innerHTML = (tipo === 'producto' ? DB.items : DB.combos).map(x => `<option value="${x.id}">${x.nombre}</option>`).join('');
+        }
+    } catch(e) { alert("Token inválido"); }
 }
 
 function exportarCSV() {
-    let csv = "Fecha,Tipo,Nombre,Monto,Costo_Asociado\n";
-    DB.ventas.forEach(v => csv += `${v.fecha},VENTA,${v.nombre},${v.total},${v.costo}\n`);
-    DB.gastos.forEach(g => csv += `${g.fecha},GASTO,${g.nombre},${g.monto},${g.monto}\n`);
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
+    let csv = "Tipo,Nombre,Total,Fecha\n";
+    DB.ventas.forEach(v => csv += `VENTA,${v.nombre},${v.total},${v.fecha}\n`);
+    DB.gastos.forEach(g => csv += `GASTO,${g.nombre},${g.monto},${g.fecha}\n`);
     const a = document.createElement('a');
-    a.href = url;
-    a.download = `MateYPunto_Backup_${new Date().toISOString().slice(0,10)}.csv`;
-    a.click();
+    a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv'}));
+    a.download = 'mate_punto_finanzas.csv'; a.click();
 }
 
-function showToast(m) {
-    const t = document.getElementById('toast');
-    t.textContent = m; t.style.display = 'block';
-    setTimeout(() => t.style.display = 'none', 2000);
-}
-
-function toggleLoading(show) { document.getElementById('loading').style.display = show ? 'flex' : 'none'; }
-
-// =============================================
-// INICIO
-// =============================================
+// INIT
 (async function init() {
     const t = localStorage.getItem(LS_TOKEN), g = localStorage.getItem(LS_GIST);
     if(t && g) {
         document.getElementById('setup-screen').style.display = 'none';
         document.getElementById('app-header').style.display = 'flex';
         document.getElementById('app-main').style.display = 'block';
-        toggleLoading(true);
-        try {
-            const res = await fetch(`https://api.github.com/gists/${g}`, { headers: { Authorization: `token ${t}` } });
-            const json = await res.json();
-            if(json.files["mate.json"]) {
-                DB = JSON.parse(json.files["mate.json"].content);
-                renderAll();
-            }
-        } catch(e) { console.error("Error al cargar datos."); }
-        toggleLoading(false);
+        const res = await fetch(`https://api.github.com/gists/${g}`, { headers: { Authorization: `token ${t}` } });
+        const json = await res.json();
+        DB = JSON.parse(json.files["mate.json"].content);
+        renderAll();
     }
 })();
 </script>
