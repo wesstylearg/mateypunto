@@ -12,12 +12,9 @@
   --text: #fdf5e6; --text-dim: #a89a8e; --red: #a33b3b; --green: #42e091;
   --radius: 14px; --font-display: 'DM Serif Display', serif; --font-mono: 'DM Mono', monospace;
 }
-
-/* Reset y Base */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:var(--font-mono);font-size:13px;line-height:1.6;overflow-x:hidden}
 
-/* Layout Principal */
 header {
     padding: 15px 25px; background: var(--primary); border-bottom: 2px solid var(--accent);
     display: flex; align-items: center; justify-content: space-between;
@@ -39,7 +36,6 @@ main { padding: 25px; max-width: 1100px; margin: 0 auto; min-height: 80vh; }
 .view.active { display: block; }
 @keyframes fadeIn { from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:translateY(0)} }
 
-/* Cards */
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; }
 .card { 
     background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
@@ -54,7 +50,6 @@ main { padding: 25px; max-width: 1100px; margin: 0 auto; min-height: 80vh; }
 
 .price { font-family: var(--font-display); font-size: 20px; color: var(--accent); margin: 5px 0; }
 
-/* Botones */
 .btn {
     background: var(--primary); color: var(--accent); border: 1px solid var(--accent);
     padding: 10px 20px; border-radius: 10px; cursor: pointer; font-family: var(--font-mono);
@@ -65,7 +60,6 @@ main { padding: 25px; max-width: 1100px; margin: 0 auto; min-height: 80vh; }
 .btn.danger { border-color: var(--red); color: var(--red); background: transparent; }
 .btn.danger:hover { background: var(--red); color: white; }
 
-/* Modales Mejorados */
 .modal-overlay {
     position: fixed; inset: 0; background: rgba(0,0,0,0.9); 
     display: none; align-items: center; justify-content: center; z-index: 2000;
@@ -82,7 +76,6 @@ main { padding: 25px; max-width: 1100px; margin: 0 auto; min-height: 80vh; }
     color: var(--text-dim); font-size: 20px; cursor: pointer;
 }
 
-/* Inputs */
 label { display: block; font-size: 10px; text-transform: uppercase; color: var(--accent); margin-bottom: 5px; margin-top: 10px; }
 input, select, textarea {
     width: 100%; background: var(--bg); border: 1px solid var(--border);
@@ -91,7 +84,6 @@ input, select, textarea {
 }
 input:focus { border-color: var(--accent); }
 
-/* Stats */
 .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px; }
 .stat-box { background: var(--surface); padding: 20px; border-radius: var(--radius); border-left: 4px solid var(--accent); }
 
@@ -108,19 +100,10 @@ input:focus { border-color: var(--accent); }
 <div id="setup-screen" style="position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:4000;">
     <div class="modal" style="text-align:center">
         <div class="logo" style="font-size:32px; margin-bottom:10px">Mate & Punto</div>
-        <p style="color:var(--text-dim); margin-bottom:25px">Gestión de Inventario Cloud</p>
-        
-        <label style="text-align:left">GitHub Token</label>
-        <input type="password" id="gh-token" placeholder="ghp_xxxxxxxxxxxx">
-        
-        <label style="text-align:left">Gist ID (Opcional si es nuevo)</label>
-        <input type="text" id="gh-gist" placeholder="ID de tu Gist existente">
-        
-        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:20px">
-            <button class="btn sec" onclick="conectarExistente()">Sincronizar Celular</button>
-            <button class="btn" onclick="crearNuevoGist()">Nuevo Sistema</button>
-        </div>
-        <p style="font-size:10px; color:var(--text-dim); margin-top:15px">Para el celular, usa el mismo Token y Gist ID que en tu PC.</p>
+        <p style="color:var(--text-dim); margin-bottom:25px">Gestión Cloud con nPoint</p>
+        <input type="text" id="cloud-id" placeholder="Pega tu nPoint ID aquí...">
+        <button class="btn" style="width:100%; margin-top:15px" onclick="iniciarCloud()">Sincronizar Sistema →</button>
+        <p style="font-size:10px; color:var(--text-dim); margin-top:15px">Usa el mismo ID en tu PC y Celular para compartir datos.</p>
     </div>
 </div>
 
@@ -133,7 +116,7 @@ input:focus { border-color: var(--accent); }
         <button class="nav-btn" onclick="switchView('ventas', this)">Ventas</button>
     </nav>
     <div style="display:flex; gap:5px">
-        <button class="btn sec" style="padding: 5px 10px" onclick="api.sync()">🔄</button>
+        <button class="btn sec" onclick="api.sync()">🔄</button>
         <button class="btn sec" onclick="exportarCSV()">CSV</button>
     </div>
 </header>
@@ -238,43 +221,35 @@ input:focus { border-color: var(--accent); }
 
 <script>
 // =============================================
-// MOTOR DE DATOS CORREGIDO PARA NUBE
+// MOTOR DE DATOS NPOINT (Sincronizado)
 // =============================================
 let DB = { items: [], combos: [], ventas: [], gastos: [] };
-const LS_TOKEN = 'mp_token_v3', LS_GIST = 'mp_gist_v3';
+const LS_ID = 'mp_cloud_id';
 
 const api = {
     async sync() {
-        const t = localStorage.getItem(LS_TOKEN), g = localStorage.getItem(LS_GIST);
-        if(!t || !g) return;
-        msg("Sincronizando...");
+        const id = localStorage.getItem(LS_ID);
+        if(!id) return;
+        msg("Sincronizando ☁️...");
         try {
-            const res = await fetch(`https://api.github.com/gists/${g}`, {
-                method: 'PATCH',
-                headers: { Authorization: `token ${t}` },
-                body: JSON.stringify({ files: { 'mate.json': { content: JSON.stringify(DB) } } })
+            await fetch(`https://api.npoint.io/${id}`, {
+                method: 'POST', // nPoint usa POST para actualizar el bin completo
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(DB)
             });
-            if(res.ok) {
-                renderAll();
-                msg("Sincronizado ✅");
-            } else { throw new Error(); }
+            renderAll();
+            msg("Sincronizado ✅");
         } catch(e) { msg("Error de conexión ❌"); }
     },
 
-    async fetchCloud() {
-        const t = localStorage.getItem(LS_TOKEN), g = localStorage.getItem(LS_GIST);
-        if(!t || !g) return;
+    async load() {
+        const id = localStorage.getItem(LS_ID);
+        if(!id) return;
         try {
-            const res = await fetch(`https://api.github.com/gists/${g}`, { 
-                headers: { Authorization: `token ${t}`, 'Cache-Control': 'no-cache' } 
-            });
-            const json = await res.json();
-            if(json.files && json.files["mate.json"]) {
-                DB = JSON.parse(json.files["mate.json"].content);
-                renderAll();
-                msg("Datos cargados de la nube");
-            }
-        } catch(e) { msg("Error al bajar datos ❌"); }
+            const res = await fetch(`https://api.npoint.io/${id}`);
+            DB = await res.json();
+            renderAll();
+        } catch(e) { msg("Error al cargar datos"); }
     },
 
     guardarItem() {
@@ -350,51 +325,7 @@ const api = {
 };
 
 // =============================================
-// LÓGICA DE LOGIN Y SETUP (NUEVO)
-// =============================================
-async function crearNuevoGist() {
-    const token = val('gh-token').trim();
-    if(!token) return alert("Pega tu Token de GitHub");
-    try {
-        const res = await fetch('https://api.github.com/gists', {
-            method: 'POST',
-            headers: { Authorization: `token ${token}` },
-            body: JSON.stringify({ 
-                description: "M&P DB", 
-                public: false, 
-                files: { "mate.json": { content: JSON.stringify(DB) } } 
-            })
-        });
-        const data = await res.json();
-        if(res.ok) {
-            localStorage.setItem(LS_TOKEN, token);
-            localStorage.setItem(LS_GIST, data.id);
-            alert("¡Sistema creado! Guarda este ID para tu celular: " + data.id);
-            location.reload();
-        } else { alert("Error: Verifica tu token"); }
-    } catch(e) { alert("Error de conexión"); }
-}
-
-async function conectarExistente() {
-    const token = val('gh-token').trim();
-    const gist = val('gh-gist').trim();
-    if(!token || !gist) return alert("Completa Token y Gist ID");
-    
-    // Probar conexión
-    try {
-        const res = await fetch(`https://api.github.com/gists/${gist}`, {
-            headers: { Authorization: `token ${token}` }
-        });
-        if(res.ok) {
-            localStorage.setItem(LS_TOKEN, token);
-            localStorage.setItem(LS_GIST, gist);
-            location.reload();
-        } else { alert("ID o Token incorrectos"); }
-    } catch(e) { alert("Error de conexión"); }
-}
-
-// =============================================
-// RENDERIZADO (IGUAL AL ORIGINAL)
+// NAVEGACIÓN Y RENDER (MANTENIDO)
 // =============================================
 function renderAll() {
     renderDashboard();
@@ -407,13 +338,10 @@ function renderDashboard() {
     const hoy = new Date().toDateString();
     const vHoy = DB.ventas.filter(v => new Date(v.fecha).toDateString() === hoy);
     const gHoy = DB.gastos.filter(g => new Date(g.fecha).toDateString() === hoy);
-    
     const ganancia = vHoy.reduce((a,b) => a + (b.total - b.costo), 0) - gHoy.reduce((a,b) => a + b.monto, 0);
     const stockVal = DB.items.reduce((a,b) => a + (b.costo * b.qty), 0);
-
     setTxt('stat-ganancia', fmt(ganancia));
     setTxt('stat-stock-val', fmt(stockVal));
-
     const alertas = DB.items.filter(i => i.qty <= i.min);
     setHtml('dashboard-alertas', alertas.map(i => `
         <div class="card" style="margin-bottom:10px; padding:12px; display:flex; justify-content:space-between">
@@ -424,14 +352,12 @@ function renderDashboard() {
 }
 
 function renderStock() {
-    const grid = document.getElementById('stock-grid');
-    if(!grid) return;
-    grid.innerHTML = DB.items.map(i => `
+    document.getElementById('stock-grid').innerHTML = DB.items.map(i => `
         <div class="card">
-            <img src="https://via.placeholder.com/200/1c1915/d9c5a3?text=${i.nombre[0]}" class="prod-img" onerror="this.src='https://via.placeholder.com/200/1c1915/d9c5a3?text=X'">
+            <img src="https://via.placeholder.com/200/1c1915/d9c5a3?text=${i.nombre[0]}" class="prod-img">
             <div style="font-weight:bold">${i.nombre}</div>
             <div class="price">${fmt(i.venta)}</div>
-            <div style="font-size:10px; color:var(--text-dim)">Costo: ${fmt(i.costo)} | Stock: ${i.qty}</div>
+            <div style="font-size:10px; color:var(--text-dim)">Stock: ${i.qty}</div>
             <div style="margin-top:15px; display:flex; gap:5px">
                 <button class="btn danger" onclick="api.borrarItem('${i.id}')">🗑</button>
             </div>
@@ -444,7 +370,6 @@ function renderCombos() {
         <div class="card">
             <div style="font-weight:bold">${c.nombre}</div>
             <div class="price">${fmt(c.venta)}</div>
-            <div style="font-size:10px; color:var(--text-dim)">Contiene ${c.items.length} productos</div>
             <button class="btn danger" style="width:100%; margin-top:10px" onclick="api.borrarCombo('${c.id}')">Eliminar</button>
         </div>
     `).join(''));
@@ -453,7 +378,7 @@ function renderCombos() {
 function renderFinanzas() {
     const all = [
         ...DB.ventas.map(v => ({...v, tipo: 'v'})),
-        ...DB.gastos.map(g => ({...g, tipo: 'g', total: g.monto, costo: 0}))
+        ...DB.gastos.map(g => ({...g, tipo: 'g', total: g.monto}))
     ].sort((a,b) => new Date(b.fecha) - new Date(a.fecha));
 
     setHtml('historial-lista', all.map(x => `
@@ -463,18 +388,12 @@ function renderFinanzas() {
                     <div style="font-weight:bold">${x.nombre}</div>
                     <div style="font-size:10px; color:var(--text-dim)">${new Date(x.fecha).toLocaleString()}</div>
                 </div>
-                <div style="text-align:right">
-                    <div style="font-weight:bold; color:${x.tipo==='v'?'var(--green)':'var(--red)'}">${x.tipo==='v'?'+':'-'}${fmt(x.total)}</div>
-                    <button class="nav-btn" onclick="api.borrarRegistro(${x.id}, '${x.tipo}')">Eliminar</button>
-                </div>
+                <div style="font-weight:bold; color:${x.tipo==='v'?'var(--green)':'var(--red)'}">${fmt(x.total)}</div>
             </div>
         </div>
     `).join(''));
 }
 
-// =============================================
-// UTILIDADES (IGUAL AL ORIGINAL)
-// =============================================
 function switchView(id, btn) {
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -507,7 +426,18 @@ const setHtml = (id, html) => document.getElementById(id).innerHTML = html;
 function msg(m) {
     const t = document.getElementById('toast');
     t.textContent = m; t.style.display = 'block';
-    setTimeout(() => t.style.display = 'none', 3000);
+    setTimeout(() => t.style.display = 'none', 2500);
+}
+
+// INICIO CLOUD
+async function iniciarCloud() {
+    const id = val('cloud-id').trim();
+    if(!id) return alert("Pega tu ID");
+    localStorage.setItem(LS_ID, id);
+    await api.load();
+    document.getElementById('setup-screen').style.display = 'none';
+    document.getElementById('app-header').style.display = 'flex';
+    document.getElementById('app-main').style.display = 'block';
 }
 
 function exportarCSV() {
@@ -519,19 +449,19 @@ function exportarCSV() {
     a.download = 'mate_punto_finanzas.csv'; a.click();
 }
 
-// INIT (CARGA AUTOMÁTICA)
+// INIT
 (async function init() {
-    const t = localStorage.getItem(LS_TOKEN), g = localStorage.getItem(LS_GIST);
-    if(t && g) {
+    const id = localStorage.getItem(LS_ID);
+    if(id) {
         document.getElementById('setup-screen').style.display = 'none';
         document.getElementById('app-header').style.display = 'flex';
         document.getElementById('app-main').style.display = 'block';
-        await api.fetchCloud(); // Sincroniza al abrir
+        await api.load();
     }
 })();
 
-// Refresco automático al volver a la pestaña
-window.addEventListener('focus', () => api.fetchCloud());
+// Refresco al volver a la pestaña
+window.addEventListener('focus', () => api.load());
 </script>
 </body>
 </html>
