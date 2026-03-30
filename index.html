@@ -35,13 +35,21 @@ main{padding:20px;max-width:1000px;margin:0 auto}
 .modal-overlay.open{display:flex}
 .modal{background:var(--surface);border:1px solid var(--accent);padding:25px;border-radius:15px;width:90%;max-width:450px;max-height:90vh;overflow-y:auto}
 input,select,textarea{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:10px;border-radius:8px;margin-top:5px;margin-bottom:12px;font-family:var(--font-mono)}
-.badge{padding:2px 6px;border-radius:4px;font-size:9px;font-weight:bold}
 #toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--accent);color:var(--primary);padding:10px 20px;border-radius:30px;display:none;z-index:2000}
 </style>
 </head>
 <body>
 
-<header>
+<div id="setup-screen" style="position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:2000;padding:20px;">
+    <div class="modal" style="text-align:center">
+        <h2 style="font-family:var(--font-display);color:var(--accent);margin-bottom:10px">Bienvenido</h2>
+        <p style="color:var(--text-dim);margin-bottom:20px">Ingresa tu GitHub Token para sincronizar tus datos.</p>
+        <input type="password" id="setup-token" placeholder="ghp_xxxxxxxxxxxx">
+        <button class="btn" style="width:100%" onclick="inicializarConToken()">Empezar →</button>
+    </div>
+</div>
+
+<header id="app-header" style="display:none">
     <div class="logo-text">Mate & Punto</div>
     <div style="display:flex;gap:10px">
         <nav>
@@ -50,16 +58,16 @@ input,select,textarea{width:100%;background:var(--bg);border:1px solid var(--bor
             <button class="nav-btn" onclick="showView('combos')">Combos</button>
             <button class="nav-btn" onclick="showView('ventas')">Finanzas</button>
         </nav>
-        <button class="btn secondary" onclick="exportCSV()">📥 Backup</button>
+        <button class="btn secondary" onclick="exportarCSV()">📥 Backup CSV</button>
     </div>
 </header>
 
-<main>
+<main id="app-main" style="display:none">
     <div class="view active" id="view-dashboard">
         <div class="cards-grid">
-            <div class="stat-card"><div class="stat-label">Ventas Mes</div><div class="stat-value" id="stat-ventas-mes">$0</div></div>
-            <div class="stat-card"><div class="stat-label">Ganancia Real</div><div class="stat-value" id="stat-ganancia-mes" style="color:var(--green)">$0</div></div>
-            <div class="stat-card"><div class="stat-label">Gastos Extra</div><div class="stat-value" id="stat-gastos-mes" style="color:var(--red)">$0</div></div>
+            <div class="stat-card"><div class="stat-label">Ventas Hoy</div><div class="stat-value" id="stat-ventas-hoy">$0</div></div>
+            <div class="stat-card"><div class="stat-label">Ganancia Real</div><div class="stat-value" id="stat-ganancia-hoy" style="color:var(--green)">$0</div></div>
+            <div class="stat-card"><div class="stat-label">Gastos Extra</div><div class="stat-value" id="stat-gastos-hoy" style="color:var(--red)">$0</div></div>
         </div>
         <div style="display:flex;gap:15px;margin-bottom:20px">
             <button class="btn" onclick="openModalVenta()">+ Nueva Venta</button>
@@ -94,18 +102,16 @@ input,select,textarea{width:100%;background:var(--bg);border:1px solid var(--bor
 <div class="modal-overlay" id="modal-item">
     <div class="modal">
         <h3 style="color:var(--accent);margin-bottom:15px">Producto</h3>
-        <label>Nombre del Producto</label>
-        <input type="text" id="item-nombre" placeholder="Ej: Mate Imperial">
+        <input type="text" id="item-nombre" placeholder="Nombre del Producto">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-            <div><label>Costo</label><input type="number" id="item-costo"></div>
-            <div><label>Venta</label><input type="number" id="item-venta"></div>
+            <input type="number" id="item-costo" placeholder="Costo">
+            <input type="number" id="item-venta" placeholder="Venta">
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-            <div><label>Stock</label><input type="number" id="item-qty"></div>
-            <div><label>Alerta Mín.</label><input type="number" id="item-min" value="2"></div>
+            <input type="number" id="item-qty" placeholder="Stock">
+            <input type="number" id="item-min" value="2" placeholder="Mínimo">
         </div>
-        <p style="font-size:10px;color:var(--text-dim)">Foto: se buscará como img/[nombre].jpg</p>
-        <div style="display:flex;gap:10px;margin-top:15px">
+        <div style="display:flex;gap:10px">
             <button class="btn secondary" style="flex:1" onclick="closeModal('modal-item')">Cerrar</button>
             <button class="btn" style="flex:1" onclick="guardarItem()">Guardar</button>
         </div>
@@ -115,60 +121,68 @@ input,select,textarea{width:100%;background:var(--bg);border:1px solid var(--bor
 <div class="modal-overlay" id="modal-combo">
     <div class="modal">
         <h3 style="color:var(--accent);margin-bottom:15px">Nuevo Combo</h3>
-        <label>Nombre del Combo</label>
-        <input type="text" id="combo-nombre">
-        <label>Productos que incluye (mantener Ctrl para varios)</label>
+        <input type="text" id="combo-nombre" placeholder="Nombre del Combo">
         <select id="combo-items-select" multiple style="height:100px"></select>
-        <label>Precio de Venta del Combo</label>
-        <input type="number" id="combo-venta">
-        <div style="display:flex;gap:10px">
-            <button class="btn secondary" style="flex:1" onclick="closeModal('modal-combo')">Cerrar</button>
-            <button class="btn" style="flex:1" onclick="guardarCombo()">Guardar</button>
-        </div>
+        <input type="number" id="combo-venta" placeholder="Precio Combo">
+        <button class="btn" style="width:100%" onclick="guardarCombo()">Guardar Combo</button>
     </div>
 </div>
 
 <div class="modal-overlay" id="modal-venta">
     <div class="modal">
-        <h3 style="color:var(--accent);margin-bottom:15px">Registrar Venta</h3>
-        <label>Tipo de Venta</label>
+        <h3 style="color:var(--accent);margin-bottom:15px">Venta</h3>
         <select id="venta-tipo" onchange="actualizarSelectorVenta()">
-            <option value="producto">Producto Individual</option>
+            <option value="producto">Producto</option>
             <option value="combo">Combo</option>
         </select>
-        <label>Seleccionar</label>
         <select id="venta-target-id"></select>
-        <label>Descripción / Cliente</label>
-        <textarea id="venta-desc" rows="2" placeholder="Ej: Juan de Instagram"></textarea>
-        <div style="display:flex;gap:10px">
-            <button class="btn secondary" style="flex:1" onclick="closeModal('modal-venta')">Cerrar</button>
-            <button class="btn" style="flex:1" onclick="confirmarVenta()">Cobrar</button>
-        </div>
+        <textarea id="venta-desc" rows="2" placeholder="Descripción (Ej: Cliente, IG, etc.)"></textarea>
+        <button class="btn" style="width:100%" onclick="confirmarVenta()">Confirmar Venta</button>
     </div>
 </div>
 
 <div class="modal-overlay" id="modal-gasto">
     <div class="modal">
         <h3 style="color:var(--accent);margin-bottom:15px">Gasto Extra</h3>
-        <label>Concepto</label>
-        <input type="text" id="gasto-nombre" placeholder="Ej: Publicidad Facebook">
-        <label>Monto ($)</label>
-        <input type="number" id="gasto-monto">
-        <div style="display:flex;gap:10px">
-            <button class="btn secondary" style="flex:1" onclick="closeModal('modal-gasto')">Cerrar</button>
-            <button class="btn danger" style="flex:1;background:var(--red);color:white" onclick="guardarGasto()">Registrar Gasto</button>
-        </div>
+        <input type="text" id="gasto-nombre" placeholder="Concepto del gasto">
+        <input type="number" id="gasto-monto" placeholder="Monto $">
+        <button class="btn danger" style="width:100%;background:var(--red);color:white" onclick="guardarGasto()">Registrar</button>
     </div>
 </div>
 
 <div id="toast"></div>
 
 <script>
-// BASE DE DATOS
 let DB = { items: [], combos: [], ventas: [], gastos: [] };
 const LS_TOKEN = 'mp_token', LS_GIST = 'mp_gist';
-
 const fmt = n => '$' + parseFloat(n||0).toLocaleString('es-AR');
+
+// =============================================
+// NUBE AUTOMÁTICA
+// =============================================
+async function inicializarConToken() {
+    const token = document.getElementById('setup-token').value.trim();
+    if(!token) return;
+    
+    // 1. Crear Gist automáticamente
+    try {
+        const res = await fetch('https://api.github.com/gists', {
+            method: 'POST',
+            headers: { Authorization: `token ${token}` },
+            body: JSON.stringify({
+                description: "Mate y Punto DB",
+                public: false,
+                files: { "mate.json": { content: JSON.stringify(DB) } }
+            })
+        });
+        const data = await res.json();
+        if(res.ok) {
+            localStorage.setItem(LS_TOKEN, token);
+            localStorage.setItem(LS_GIST, data.id);
+            location.reload();
+        } else { alert("Token inválido"); }
+    } catch(e) { alert("Error al conectar"); }
+}
 
 async function sync() {
     const t = localStorage.getItem(LS_TOKEN), g = localStorage.getItem(LS_GIST);
@@ -181,11 +195,13 @@ async function sync() {
     renderAll();
 }
 
-// LOGICA PRODUCTOS
+// =============================================
+// LÓGICA DE NEGOCIO
+// =============================================
+
 function guardarItem() {
-    const id = Date.now().toString();
     const item = {
-        id,
+        id: Date.now().toString(),
         nombre: document.getElementById('item-nombre').value,
         costo: parseFloat(document.getElementById('item-costo').value) || 0,
         venta: parseFloat(document.getElementById('item-venta').value) || 0,
@@ -198,60 +214,59 @@ function guardarItem() {
 }
 
 function eliminarItem(id) {
-    if(!confirm("¿Eliminar producto? No afectará ventas pasadas.")) return;
-    DB.items = DB.items.filter(i => i.id !== id);
-    sync();
+    if(confirm("¿Eliminar producto del stock?")) {
+        DB.items = DB.items.filter(i => i.id !== id);
+        sync();
+    }
 }
 
-// LOGICA COMBOS
 function guardarCombo() {
     const select = document.getElementById('combo-items-select');
     const ids = Array.from(select.selectedOptions).map(opt => opt.value);
-    const combo = {
+    DB.combos.push({
         id: 'c' + Date.now(),
         nombre: document.getElementById('combo-nombre').value,
         itemIds: ids,
         venta: parseFloat(document.getElementById('combo-venta').value) || 0
-    };
-    DB.combos.push(combo);
+    });
     closeModal('modal-combo');
     sync();
 }
 
-// LOGICA VENTAS Y GASTOS
+function eliminarCombo(id) {
+    if(confirm("¿Eliminar combo?")) {
+        DB.combos = DB.combos.filter(c => c.id !== id);
+        sync();
+    }
+}
+
 function confirmarVenta() {
     const tipo = document.getElementById('venta-tipo').value;
     const targetId = document.getElementById('venta-target-id').value;
     const desc = document.getElementById('venta-desc').value;
 
-    let totalVenta = 0, costoVenta = 0, nombreVenta = "";
+    let vData = { id: Date.now(), fecha: new Date().toISOString(), desc };
 
-    if (tipo === 'producto') {
+    if(tipo === 'producto') {
         const it = DB.items.find(i => i.id === targetId);
-        if (it.cantidad < 1) return alert("Sin stock");
+        if(it.cantidad < 1) return alert("Sin stock");
         it.cantidad--;
-        totalVenta = it.venta;
-        costoVenta = it.costo;
-        nombreVenta = it.nombre;
+        vData.nombre = it.nombre;
+        vData.total = it.venta;
+        vData.costo = it.costo;
     } else {
         const co = DB.combos.find(c => c.id === targetId);
+        let costoTotal = 0;
         co.itemIds.forEach(id => {
             const it = DB.items.find(i => i.id === id);
-            if (it) { it.cantidad--; costoVenta += it.costo; }
+            if(it) { it.cantidad--; costoTotal += it.costo; }
         });
-        totalVenta = co.venta;
-        nombreVenta = "COMBO: " + co.nombre;
+        vData.nombre = "COMBO: " + co.nombre;
+        vData.total = co.venta;
+        vData.costo = costoTotal;
     }
 
-    DB.ventas.push({
-        id: Date.now(),
-        fecha: new Date().toISOString(),
-        nombre: nombreVenta,
-        total: totalVenta,
-        costo: costoVenta,
-        desc: desc
-    });
-
+    DB.ventas.push(vData);
     closeModal('modal-venta');
     sync();
 }
@@ -267,94 +282,86 @@ function guardarGasto() {
     sync();
 }
 
-function eliminarFinanza(id, tipo) {
+function eliminarRegistro(id, tipo) {
     if(!confirm("¿Eliminar este registro?")) return;
     if(tipo === 'venta') DB.ventas = DB.ventas.filter(v => v.id !== id);
     else DB.gastos = DB.gastos.filter(g => g.id !== id);
     sync();
 }
 
-// RENDERERS
+// =============================================
+// RENDERERS Y UI
+// =============================================
+
 function renderAll() {
-    renderDashboard();
-    renderStock();
-    renderCombos();
-    renderFinanzas();
-}
+    // Dashboard
+    const hoy = new Date().toDateString();
+    const vHoy = DB.ventas.filter(v => new Date(v.fecha).toDateString() === hoy);
+    const gHoy = DB.gastos.filter(g => new Date(g.fecha).toDateString() === hoy);
+    
+    const ingresos = vHoy.reduce((a,b) => a + b.total, 0);
+    const costos = vHoy.reduce((a,b) => a + b.costo, 0);
+    const gastos = gHoy.reduce((a,b) => a + b.monto, 0);
 
-function renderDashboard() {
-    const hoy = new Date().getMonth();
-    const ventasMes = DB.ventas.filter(v => new Date(v.fecha).getMonth() === hoy);
-    const gastosMes = DB.gastos.filter(g => new Date(g.fecha).getMonth() === hoy);
+    document.getElementById('stat-ventas-hoy').textContent = fmt(ingresos);
+    document.getElementById('stat-ganancia-hoy').textContent = fmt(ingresos - costos - gastos);
+    document.getElementById('stat-gastos-hoy').textContent = fmt(gastos);
 
-    const ingresos = ventasMes.reduce((a,b) => a + b.total, 0);
-    const costosProd = ventasMes.reduce((a,b) => a + b.costo, 0);
-    const extras = gastosMes.reduce((a,b) => a + b.monto, 0);
-
-    document.getElementById('stat-ventas-mes').textContent = fmt(ingresos);
-    document.getElementById('stat-ganancia-mes').textContent = fmt(ingresos - costosProd - extras);
-    document.getElementById('stat-gastos-mes').textContent = fmt(extras);
-
-    const alertas = DB.items.filter(i => i.cantidad <= i.min);
-    document.getElementById('alertas-stock').innerHTML = alertas.map(i => `
-        <div class="card" style="margin-bottom:5px;padding:10px;display:flex;justify-content:space-between">
-            <span>${i.nombre}</span>
-            <span style="color:var(--red)">Stock: ${i.cantidad}</span>
-        </div>
-    `).join('');
-}
-
-function renderStock() {
-    const grid = document.getElementById('stock-grid');
-    grid.innerHTML = DB.items.map(i => `
+    // Stock
+    document.getElementById('stock-grid').innerHTML = DB.items.map(i => `
         <div class="card">
-            <img src="img/${i.nombre.toLowerCase().replace(/ /g, '-')}.jpg" class="producto-img" onerror="this.src='https://via.placeholder.com/150/1a1612/d9c5a3?text=Sin+Foto'">
+            <img src="img/${i.nombre.toLowerCase().replace(/ /g, '-')}.jpg" class="producto-img" onerror="this.src='https://via.placeholder.com/150/1a1612/d9c5a3?text=${i.nombre}'">
             <div style="font-weight:bold;color:var(--accent)">${i.nombre}</div>
             <div style="font-size:16px;margin:5px 0">${fmt(i.venta)}</div>
             <div style="font-size:10px;color:var(--text-dim)">Stock: ${i.cantidad}</div>
-            <button class="btn danger" style="width:100%;margin-top:10px" onclick="eliminarItem('${i.id}')">Eliminar</button>
+            <button class="btn danger" style="width:100%;margin-top:10px;padding:4px" onclick="eliminarItem('${i.id}')">Eliminar</button>
         </div>
     `).join('');
-}
 
-function renderCombos() {
-    const grid = document.getElementById('combos-grid');
-    grid.innerHTML = DB.combos.map(c => `
+    // Combos
+    document.getElementById('combos-grid').innerHTML = DB.combos.map(c => `
         <div class="card">
             <div style="font-weight:bold;color:var(--accent)">${c.nombre}</div>
             <div style="font-size:14px;margin:5px 0">${fmt(c.venta)}</div>
-            <div style="font-size:9px;color:var(--text-dim)">Incluye: ${c.itemIds.length} productos</div>
+            <button class="btn danger" style="width:100%;margin-top:10px;padding:4px" onclick="eliminarCombo('${c.id}')">Eliminar</button>
         </div>
     `).join('');
-}
 
-function renderFinanzas() {
-    const lista = document.getElementById('historial-mezclado');
+    // Historial
     const todo = [
         ...DB.ventas.map(v => ({...v, tipo: 'venta'})),
         ...DB.gastos.map(g => ({...g, tipo: 'gasto', total: g.monto}))
     ].sort((a,b) => new Date(b.fecha) - new Date(a.fecha));
 
-    lista.innerHTML = todo.map(x => `
+    document.getElementById('historial-mezclado').innerHTML = todo.map(x => `
         <div class="card" style="margin-bottom:10px; border-left: 4px solid ${x.tipo === 'venta' ? 'var(--green)' : 'var(--red)'}">
             <div style="display:flex; justify-content:space-between">
                 <div>
-                    <span class="badge" style="background:${x.tipo === 'venta' ? 'var(--primary)' : '#4a1a1a'}">${x.tipo.toUpperCase()}</span>
-                    <div style="font-weight:bold;margin-top:5px">${x.nombre}</div>
+                    <div style="font-weight:bold">${x.nombre}</div>
                     <div style="font-size:10px;color:var(--text-dim)">${x.desc || ''}</div>
                 </div>
                 <div style="text-align:right">
-                    <div style="font-weight:bold; color:${x.tipo === 'venta' ? 'var(--green)' : 'var(--red)'}">
-                        ${x.tipo === 'venta' ? '+' : '-'}${fmt(x.total)}
-                    </div>
-                    <button onclick="eliminarFinanza(${x.id}, '${x.tipo}')" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:10px">🗑 Borrar</button>
+                    <div style="color:${x.tipo === 'venta' ? 'var(--green)' : 'var(--red)'}">${fmt(x.total)}</div>
+                    <button onclick="eliminarRegistro(${x.id}, '${x.tipo}')" style="background:none;border:none;color:var(--red);font-size:10px;cursor:pointer">Borrar</button>
                 </div>
             </div>
         </div>
     `).join('');
 }
 
-// UI HELPERS
+function exportarCSV() {
+    let csv = "Fecha,Tipo,Nombre,Monto,Costo/Gasto\n";
+    DB.ventas.forEach(v => csv += `${v.fecha},Venta,${v.nombre},${v.total},${v.costo}\n`);
+    DB.gastos.forEach(g => csv += `${g.fecha},Gasto,${g.nombre},${g.monto},${g.monto}\n`);
+    
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.setAttribute('href', url);
+    a.setAttribute('download', 'finanzas_mateypunto.csv');
+    a.click();
+}
+
 function showView(id) {
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -364,58 +371,31 @@ function showView(id) {
 
 function openModalItem() { document.getElementById('modal-item').classList.add('open'); }
 function openModalGasto() { document.getElementById('modal-gasto').classList.add('open'); }
-function openModalVenta() { 
-    actualizarSelectorVenta();
-    document.getElementById('modal-venta').classList.add('open'); 
+function openModalVenta() { actualizarSelectorVenta(); document.getElementById('modal-venta').classList.add('open'); }
+function openModalCombo() { 
+    document.getElementById('combo-items-select').innerHTML = DB.items.map(i => `<option value="${i.id}">${i.nombre}</option>`).join('');
+    document.getElementById('modal-combo').classList.add('open'); 
 }
-function openModalCombo() {
-    const s = document.getElementById('combo-items-select');
-    s.innerHTML = DB.items.map(i => `<option value="${i.id}">${i.nombre}</option>`).join('');
-    document.getElementById('modal-combo').classList.add('open');
-}
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 
 function actualizarSelectorVenta() {
     const tipo = document.getElementById('venta-tipo').value;
     const s = document.getElementById('venta-target-id');
-    if(tipo === 'producto') {
-        s.innerHTML = DB.items.map(i => `<option value="${i.id}">${i.nombre} (${i.cantidad})</option>`).join('');
-    } else {
-        s.innerHTML = DB.combos.map(c => `<option value="${c.id}">${c.nombre}</option>`).join('');
-    }
-}
-
-function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-
-function exportCSV() {
-    const data = JSON.stringify(DB);
-    const blob = new Blob([data], {type: 'application/json'});
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = `backup_mateypunto_${new Date().toISOString().slice(0,10)}.json`;
-    a.click();
-}
-
-function abrirConfig() {
-    const t = prompt("GitHub Token:", localStorage.getItem(LS_TOKEN));
-    const g = prompt("Gist ID:", localStorage.getItem(LS_GIST));
-    if(t && g) {
-        localStorage.setItem(LS_TOKEN, t);
-        localStorage.setItem(LS_GIST, g);
-        location.reload();
-    }
+    s.innerHTML = (tipo === 'producto' ? DB.items : DB.combos).map(x => `<option value="${x.id}">${x.nombre}</option>`).join('');
 }
 
 // INIT
 (async function init() {
     const t = localStorage.getItem(LS_TOKEN), g = localStorage.getItem(LS_GIST);
-    if (t && g) {
-        try {
-            const res = await fetch(`https://api.github.com/gists/${g}`, { headers: { Authorization: `token ${t}` } });
-            const json = await res.json();
-            DB = JSON.parse(json.files['mate.json'].content);
-            renderAll();
-        } catch(e) { abrirConfig(); }
-    } else { abrirConfig(); }
+    if(t && g) {
+        document.getElementById('setup-screen').style.display = 'none';
+        document.getElementById('app-header').style.display = 'flex';
+        document.getElementById('app-main').style.display = 'block';
+        const res = await fetch(`https://api.github.com/gists/${g}`, { headers: { Authorization: `token ${t}` } });
+        const json = await res.json();
+        DB = JSON.parse(json.files['mate.json'].content);
+        renderAll();
+    }
 })();
 </script>
 </body>
