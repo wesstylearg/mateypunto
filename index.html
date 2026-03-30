@@ -13,7 +13,7 @@
   --radius: 12px; --font-display: 'DM Serif Display', serif; --font-mono: 'DM Mono', monospace;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:var(--font-mono);font-size:13px;line-height:1.6}
+body{background:var(--bg);color:var(--text);font-family:var(--font-mono);font-size:13px;line-height:1.6; min-height: 100vh;}
 header{padding:15px 20px;background:var(--primary);border-bottom:3px solid var(--accent);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
 .logo-text{font-family:var(--font-display);font-size:22px;color:var(--accent);text-transform:uppercase}
 nav{display:flex;gap:5px;background:rgba(0,0,0,0.2);padding:5px;border-radius:10px}
@@ -25,27 +25,32 @@ main{padding:20px;max-width:1000px;margin:0 auto}
 .stat-card{background:var(--surface);border:1px solid var(--border);padding:15px;border-radius:var(--radius);border-left:4px solid var(--accent)}
 .stat-label{color:var(--text-dim);font-size:10px;text-transform:uppercase;margin-bottom:5px}
 .stat-value{font-family:var(--font-display);font-size:24px;color:var(--accent)}
-.btn{background:var(--primary);border:1px solid var(--accent);color:var(--accent);padding:8px 16px;border-radius:8px;cursor:pointer;font-family:var(--font-mono);font-size:11px}
+.btn{background:var(--primary);border:1px solid var(--accent);color:var(--accent);padding:8px 16px;border-radius:8px;cursor:pointer;font-family:var(--font-mono);font-size:11px; transition: 0.2s;}
+.btn:active{transform: scale(0.98);}
 .btn.secondary{background:var(--surface2);border-color:var(--border);color:var(--text-dim)}
 .btn.danger{border-color:var(--red);color:var(--red);background:transparent}
 .producto-img{width:100%;height:150px;object-fit:cover;border-radius:8px;margin-bottom:10px;background:var(--bg)}
 .productos-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:15px}
 .card{background:var(--surface);border:1px solid var(--border);padding:15px;border-radius:var(--radius);position:relative}
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:1000;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:1000;align-items:center;justify-content:center;backdrop-filter:blur(4px); padding: 20px;}
 .modal-overlay.open{display:flex}
-.modal{background:var(--surface);border:1px solid var(--accent);padding:25px;border-radius:15px;width:90%;max-width:450px;max-height:90vh;overflow-y:auto}
-input,select,textarea{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:10px;border-radius:8px;margin-top:5px;margin-bottom:12px;font-family:var(--font-mono)}
-#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--accent);color:var(--primary);padding:10px 20px;border-radius:30px;display:none;z-index:2000}
+.modal{background:var(--surface);border:1px solid var(--accent);padding:25px;border-radius:15px;width:100%;max-width:450px;max-height:90vh;overflow-y:auto}
+input,select,textarea{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:10px;border-radius:8px;margin-top:5px;margin-bottom:12px;font-family:var(--font-mono); outline: none;}
+input:focus{border-color: var(--accent);}
+#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--accent);color:var(--primary);padding:10px 20px;border-radius:30px;display:none;z-index:2000; font-weight: bold;}
+.loading-overlay{position:fixed;inset:0;background:var(--bg);display:none;align-items:center;justify-content:center;z-index:3000;flex-direction:column;gap:10px;}
 </style>
 </head>
 <body>
 
+<div id="loading" class="loading-overlay">Sincronizando con la nube...</div>
+
 <div id="setup-screen" style="position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:2000;padding:20px;">
     <div class="modal" style="text-align:center">
-        <h2 style="font-family:var(--font-display);color:var(--accent);margin-bottom:10px">Bienvenido</h2>
-        <p style="color:var(--text-dim);margin-bottom:20px">Ingresa tu GitHub Token para sincronizar tus datos.</p>
+        <h2 style="font-family:var(--font-display);color:var(--accent);margin-bottom:10px">MATE & PUNTO</h2>
+        <p style="color:var(--text-dim);margin-bottom:20px">Configuración inicial del Token GitHub</p>
         <input type="password" id="setup-token" placeholder="ghp_xxxxxxxxxxxx">
-        <button class="btn" style="width:100%" onclick="inicializarConToken()">Empezar →</button>
+        <button class="btn" style="width:100%" onclick="inicializarConToken()">Conectar y Empezar →</button>
     </div>
 </div>
 
@@ -58,7 +63,7 @@ input,select,textarea{width:100%;background:var(--bg);border:1px solid var(--bor
             <button class="nav-btn" onclick="showView('combos')">Combos</button>
             <button class="nav-btn" onclick="showView('ventas')">Finanzas</button>
         </nav>
-        <button class="btn secondary" onclick="exportarCSV()">📥 Backup CSV</button>
+        <button class="btn secondary" onclick="exportarCSV()">📥 Backup</button>
     </div>
 </header>
 
@@ -69,7 +74,7 @@ input,select,textarea{width:100%;background:var(--bg);border:1px solid var(--bor
             <div class="stat-card"><div class="stat-label">Ganancia Real</div><div class="stat-value" id="stat-ganancia-hoy" style="color:var(--green)">$0</div></div>
             <div class="stat-card"><div class="stat-label">Gastos Extra</div><div class="stat-value" id="stat-gastos-hoy" style="color:var(--red)">$0</div></div>
         </div>
-        <div style="display:flex;gap:15px;margin-bottom:20px">
+        <div style="display:flex;gap:15px;margin-bottom:25px">
             <button class="btn" onclick="openModalVenta()">+ Nueva Venta</button>
             <button class="btn secondary" onclick="openModalGasto()">+ Gasto Extra</button>
         </div>
@@ -87,14 +92,14 @@ input,select,textarea{width:100%;background:var(--bg);border:1px solid var(--bor
 
     <div class="view" id="view-combos">
         <div style="display:flex;justify-content:space-between;margin-bottom:20px">
-            <h2 style="font-family:var(--font-display)">Combos</h2>
+            <h2 style="font-family:var(--font-display)">Gestión de Combos</h2>
             <button class="btn" onclick="openModalCombo()">+ Crear Combo</button>
         </div>
         <div class="productos-grid" id="combos-grid"></div>
     </div>
 
     <div class="view" id="view-ventas">
-        <h2 style="font-family:var(--font-display);margin-bottom:20px">Historial Financiero</h2>
+        <h2 style="font-family:var(--font-display);margin-bottom:20px">Historial de Operaciones</h2>
         <div id="historial-mezclado"></div>
     </div>
 </main>
@@ -102,17 +107,17 @@ input,select,textarea{width:100%;background:var(--bg);border:1px solid var(--bor
 <div class="modal-overlay" id="modal-item">
     <div class="modal">
         <h3 style="color:var(--accent);margin-bottom:15px">Producto</h3>
-        <input type="text" id="item-nombre" placeholder="Nombre del Producto">
+        <label>Nombre</label><input type="text" id="item-nombre">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-            <input type="number" id="item-costo" placeholder="Costo">
-            <input type="number" id="item-venta" placeholder="Venta">
+            <div><label>Costo</label><input type="number" id="item-costo"></div>
+            <div><label>Venta</label><input type="number" id="item-venta"></div>
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-            <input type="number" id="item-qty" placeholder="Stock">
-            <input type="number" id="item-min" value="2" placeholder="Mínimo">
+            <div><label>Stock Actual</label><input type="number" id="item-qty"></div>
+            <div><label>Mínimo Alerta</label><input type="number" id="item-min" value="2"></div>
         </div>
-        <div style="display:flex;gap:10px">
-            <button class="btn secondary" style="flex:1" onclick="closeModal('modal-item')">Cerrar</button>
+        <div style="display:flex;gap:10px;margin-top:10px">
+            <button class="btn secondary" style="flex:1" onclick="closeModal('modal-item')">Cancelar</button>
             <button class="btn" style="flex:1" onclick="guardarItem()">Guardar</button>
         </div>
     </div>
@@ -121,22 +126,29 @@ input,select,textarea{width:100%;background:var(--bg);border:1px solid var(--bor
 <div class="modal-overlay" id="modal-combo">
     <div class="modal">
         <h3 style="color:var(--accent);margin-bottom:15px">Nuevo Combo</h3>
-        <input type="text" id="combo-nombre" placeholder="Nombre del Combo">
-        <select id="combo-items-select" multiple style="height:100px"></select>
-        <input type="number" id="combo-venta" placeholder="Precio Combo">
-        <button class="btn" style="width:100%" onclick="guardarCombo()">Guardar Combo</button>
+        <label>Nombre del Combo</label><input type="text" id="combo-nombre">
+        <label>Productos (Ctrl + Click para varios)</label>
+        <select id="combo-items-select" multiple style="height:120px"></select>
+        <label>Precio Final Combo</label><input type="number" id="combo-venta">
+        <div style="display:flex;gap:10px">
+            <button class="btn secondary" style="flex:1" onclick="closeModal('modal-combo')">Cancelar</button>
+            <button class="btn" style="flex:1" onclick="guardarCombo()">Guardar</button>
+        </div>
     </div>
 </div>
 
 <div class="modal-overlay" id="modal-venta">
     <div class="modal">
-        <h3 style="color:var(--accent);margin-bottom:15px">Venta</h3>
+        <h3 style="color:var(--accent);margin-bottom:15px">Registrar Venta</h3>
+        <label>¿Qué vendiste?</label>
         <select id="venta-tipo" onchange="actualizarSelectorVenta()">
-            <option value="producto">Producto</option>
+            <option value="producto">Producto Individual</option>
             <option value="combo">Combo</option>
         </select>
+        <label>Seleccionar ítem</label>
         <select id="venta-target-id"></select>
-        <textarea id="venta-desc" rows="2" placeholder="Descripción (Ej: Cliente, IG, etc.)"></textarea>
+        <label>Notas (Cliente, IG, etc.)</label>
+        <textarea id="venta-desc" rows="2"></textarea>
         <button class="btn" style="width:100%" onclick="confirmarVenta()">Confirmar Venta</button>
     </div>
 </div>
@@ -144,8 +156,8 @@ input,select,textarea{width:100%;background:var(--bg);border:1px solid var(--bor
 <div class="modal-overlay" id="modal-gasto">
     <div class="modal">
         <h3 style="color:var(--accent);margin-bottom:15px">Gasto Extra</h3>
-        <input type="text" id="gasto-nombre" placeholder="Concepto del gasto">
-        <input type="number" id="gasto-monto" placeholder="Monto $">
+        <label>Concepto</label><input type="text" id="gasto-nombre">
+        <label>Monto $</label><input type="number" id="gasto-monto">
         <button class="btn danger" style="width:100%;background:var(--red);color:white" onclick="guardarGasto()">Registrar</button>
     </div>
 </div>
@@ -158,13 +170,12 @@ const LS_TOKEN = 'mp_token', LS_GIST = 'mp_gist';
 const fmt = n => '$' + parseFloat(n||0).toLocaleString('es-AR');
 
 // =============================================
-// NUBE AUTOMÁTICA
+// NUBE Y PERSISTENCIA
 // =============================================
 async function inicializarConToken() {
     const token = document.getElementById('setup-token').value.trim();
     if(!token) return;
-    
-    // 1. Crear Gist automáticamente
+    toggleLoading(true);
     try {
         const res = await fetch('https://api.github.com/gists', {
             method: 'POST',
@@ -180,19 +191,23 @@ async function inicializarConToken() {
             localStorage.setItem(LS_TOKEN, token);
             localStorage.setItem(LS_GIST, data.id);
             location.reload();
-        } else { alert("Token inválido"); }
-    } catch(e) { alert("Error al conectar"); }
+        } else { alert("Token inválido."); }
+    } catch(e) { alert("Error de conexión."); }
+    toggleLoading(false);
 }
 
 async function sync() {
     const t = localStorage.getItem(LS_TOKEN), g = localStorage.getItem(LS_GIST);
     if (!t || !g) return;
-    await fetch(`https://api.github.com/gists/${g}`, {
-        method: 'PATCH',
-        headers: { Authorization: `token ${t}` },
-        body: JSON.stringify({ files: { 'mate.json': { content: JSON.stringify(DB) } } })
-    });
-    renderAll();
+    try {
+        await fetch(`https://api.github.com/gists/${g}`, {
+            method: 'PATCH',
+            headers: { Authorization: `token ${t}` },
+            body: JSON.stringify({ files: { 'mate.json': { content: JSON.stringify(DB) } } })
+        });
+        showToast("Sincronizado ✅");
+        renderAll();
+    } catch(e) { showToast("Error al guardar ❌"); }
 }
 
 // =============================================
@@ -208,48 +223,45 @@ function guardarItem() {
         cantidad: parseInt(document.getElementById('item-qty').value) || 0,
         min: parseInt(document.getElementById('item-min').value) || 2
     };
+    if(!item.nombre) return alert("Nombre obligatorio");
     DB.items.push(item);
     closeModal('modal-item');
     sync();
 }
 
 function eliminarItem(id) {
-    if(confirm("¿Eliminar producto del stock?")) {
-        DB.items = DB.items.filter(i => i.id !== id);
-        sync();
-    }
+    if(confirm("¿Eliminar del stock?")) { DB.items = DB.items.filter(i => i.id !== id); sync(); }
 }
 
 function guardarCombo() {
     const select = document.getElementById('combo-items-select');
     const ids = Array.from(select.selectedOptions).map(opt => opt.value);
-    DB.combos.push({
+    const combo = {
         id: 'c' + Date.now(),
         nombre: document.getElementById('combo-nombre').value,
         itemIds: ids,
         venta: parseFloat(document.getElementById('combo-venta').value) || 0
-    });
+    };
+    if(!combo.nombre || ids.length === 0) return alert("Completa el nombre e ítems");
+    DB.combos.push(combo);
     closeModal('modal-combo');
     sync();
 }
 
 function eliminarCombo(id) {
-    if(confirm("¿Eliminar combo?")) {
-        DB.combos = DB.combos.filter(c => c.id !== id);
-        sync();
-    }
+    if(confirm("¿Eliminar combo?")) { DB.combos = DB.combos.filter(c => c.id !== id); sync(); }
 }
 
 function confirmarVenta() {
     const tipo = document.getElementById('venta-tipo').value;
     const targetId = document.getElementById('venta-target-id').value;
-    const desc = document.getElementById('venta-desc').value;
+    if(!targetId) return alert("Selecciona un ítem");
 
-    let vData = { id: Date.now(), fecha: new Date().toISOString(), desc };
+    let vData = { id: Date.now(), fecha: new Date().toISOString(), desc: document.getElementById('venta-desc').value };
 
     if(tipo === 'producto') {
         const it = DB.items.find(i => i.id === targetId);
-        if(it.cantidad < 1) return alert("Sin stock");
+        if(!it || it.cantidad < 1) return alert("Sin stock suficiente");
         it.cantidad--;
         vData.nombre = it.nombre;
         vData.total = it.venta;
@@ -257,10 +269,13 @@ function confirmarVenta() {
     } else {
         const co = DB.combos.find(c => c.id === targetId);
         let costoTotal = 0;
+        let sinStock = false;
         co.itemIds.forEach(id => {
             const it = DB.items.find(i => i.id === id);
-            if(it) { it.cantidad--; costoTotal += it.costo; }
+            if(it && it.cantidad > 0) { it.cantidad--; costoTotal += it.costo; }
+            else { sinStock = true; }
         });
+        if(sinStock) return alert("Uno de los productos del combo no tiene stock");
         vData.nombre = "COMBO: " + co.nombre;
         vData.total = co.venta;
         vData.costo = costoTotal;
@@ -272,12 +287,14 @@ function confirmarVenta() {
 }
 
 function guardarGasto() {
-    DB.gastos.push({
+    const gasto = {
         id: Date.now(),
         fecha: new Date().toISOString(),
         nombre: document.getElementById('gasto-nombre').value,
         monto: parseFloat(document.getElementById('gasto-monto').value) || 0
-    });
+    };
+    if(!gasto.nombre) return alert("Concepto obligatorio");
+    DB.gastos.push(gasto);
     closeModal('modal-gasto');
     sync();
 }
@@ -290,78 +307,82 @@ function eliminarRegistro(id, tipo) {
 }
 
 // =============================================
-// RENDERERS Y UI
+// RENDERERS
 // =============================================
 
 function renderAll() {
-    // Dashboard
+    // Stats
     const hoy = new Date().toDateString();
     const vHoy = DB.ventas.filter(v => new Date(v.fecha).toDateString() === hoy);
     const gHoy = DB.gastos.filter(g => new Date(g.fecha).toDateString() === hoy);
-    
     const ingresos = vHoy.reduce((a,b) => a + b.total, 0);
     const costos = vHoy.reduce((a,b) => a + b.costo, 0);
-    const gastos = gHoy.reduce((a,b) => a + b.monto, 0);
+    const extras = gHoy.reduce((a,b) => a + b.monto, 0);
 
     document.getElementById('stat-ventas-hoy').textContent = fmt(ingresos);
-    document.getElementById('stat-ganancia-hoy').textContent = fmt(ingresos - costos - gastos);
-    document.getElementById('stat-gastos-hoy').textContent = fmt(gastos);
+    document.getElementById('stat-ganancia-hoy').textContent = fmt(ingresos - costos - extras);
+    document.getElementById('stat-gastos-hoy').textContent = fmt(extras);
 
-    // Stock
-    document.getElementById('stock-grid').innerHTML = DB.items.map(i => `
+    // Alertas Stock
+    const alertas = DB.items.filter(i => i.cantidad <= i.min);
+    document.getElementById('alertas-stock').innerHTML = alertas.length ? alertas.map(i => `
+        <div class="card" style="margin-bottom:8px; padding:12px; display:flex; justify-content:space-between; align-items:center;">
+            <span>${i.nombre}</span>
+            <span style="color:var(--red); font-weight:bold;">${i.cantidad === 0 ? 'AGOTADO' : 'STOCK: ' + i.cantidad}</span>
+        </div>
+    `).join('') : '<p style="color:var(--text-dim)">Stock saludable ✅</p>';
+
+    // Stock Grid
+    document.getElementById('stock-grid').innerHTML = DB.items.map(i => {
+        const fileName = i.nombre.toLowerCase().trim().replace(/ /g, '-');
+        return `
         <div class="card">
-            <img src="img/${i.nombre.toLowerCase().replace(/ /g, '-')}.jpg" class="producto-img" onerror="this.src='https://via.placeholder.com/150/1a1612/d9c5a3?text=${i.nombre}'">
+            <img src="img/${fileName}.jpg" class="producto-img" onerror="this.src='https://via.placeholder.com/150/1a1612/d9c5a3?text=${i.nombre.substring(0,1)}'">
             <div style="font-weight:bold;color:var(--accent)">${i.nombre}</div>
             <div style="font-size:16px;margin:5px 0">${fmt(i.venta)}</div>
-            <div style="font-size:10px;color:var(--text-dim)">Stock: ${i.cantidad}</div>
-            <button class="btn danger" style="width:100%;margin-top:10px;padding:4px" onclick="eliminarItem('${i.id}')">Eliminar</button>
-        </div>
-    `).join('');
+            <div style="font-size:10px;color:var(--text-dim)">Disponibles: ${i.cantidad}</div>
+            <button class="btn danger" style="width:100%;margin-top:10px;padding:5px" onclick="eliminarItem('${i.id}')">Eliminar</button>
+        </div>`;
+    }).join('');
 
-    // Combos
+    // Combos Grid
     document.getElementById('combos-grid').innerHTML = DB.combos.map(c => `
         <div class="card">
             <div style="font-weight:bold;color:var(--accent)">${c.nombre}</div>
             <div style="font-size:14px;margin:5px 0">${fmt(c.venta)}</div>
-            <button class="btn danger" style="width:100%;margin-top:10px;padding:4px" onclick="eliminarCombo('${c.id}')">Eliminar</button>
+            <div style="font-size:9px;color:var(--text-dim)">Contiene ${c.itemIds.length} ítems</div>
+            <button class="btn danger" style="width:100%;margin-top:10px;padding:5px" onclick="eliminarCombo('${c.id}')">Eliminar</button>
         </div>
     `).join('');
 
     // Historial
-    const todo = [
+    const fusion = [
         ...DB.ventas.map(v => ({...v, tipo: 'venta'})),
         ...DB.gastos.map(g => ({...g, tipo: 'gasto', total: g.monto}))
     ].sort((a,b) => new Date(b.fecha) - new Date(a.fecha));
 
-    document.getElementById('historial-mezclado').innerHTML = todo.map(x => `
-        <div class="card" style="margin-bottom:10px; border-left: 4px solid ${x.tipo === 'venta' ? 'var(--green)' : 'var(--red)'}">
+    document.getElementById('historial-mezclado').innerHTML = fusion.map(x => `
+        <div class="card" style="margin-bottom:10px; border-left: 5px solid ${x.tipo === 'venta' ? 'var(--green)' : 'var(--red)'}">
             <div style="display:flex; justify-content:space-between">
                 <div>
+                    <span style="font-size:9px; color:var(--accent)">${new Date(x.fecha).toLocaleDateString()}</span>
                     <div style="font-weight:bold">${x.nombre}</div>
-                    <div style="font-size:10px;color:var(--text-dim)">${x.desc || ''}</div>
+                    <div style="font-size:10px; color:var(--text-dim)">${x.desc || ''}</div>
                 </div>
                 <div style="text-align:right">
-                    <div style="color:${x.tipo === 'venta' ? 'var(--green)' : 'var(--red)'}">${fmt(x.total)}</div>
-                    <button onclick="eliminarRegistro(${x.id}, '${x.tipo}')" style="background:none;border:none;color:var(--red);font-size:10px;cursor:pointer">Borrar</button>
+                    <div style="font-weight:bold; color:${x.tipo === 'venta' ? 'var(--green)' : 'var(--red)'}">
+                        ${x.tipo === 'venta' ? '+' : '-'}${fmt(x.total)}
+                    </div>
+                    <button onclick="eliminarRegistro(${x.id}, '${x.tipo}')" style="background:none;border:none;color:var(--red);font-size:10px;cursor:pointer;margin-top:5px">Eliminar</button>
                 </div>
             </div>
         </div>
     `).join('');
 }
 
-function exportarCSV() {
-    let csv = "Fecha,Tipo,Nombre,Monto,Costo/Gasto\n";
-    DB.ventas.forEach(v => csv += `${v.fecha},Venta,${v.nombre},${v.total},${v.costo}\n`);
-    DB.gastos.forEach(g => csv += `${g.fecha},Gasto,${g.nombre},${g.monto},${g.monto}\n`);
-    
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.setAttribute('href', url);
-    a.setAttribute('download', 'finanzas_mateypunto.csv');
-    a.click();
-}
-
+// =============================================
+// HELPERS UI
+// =============================================
 function showView(id) {
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -373,7 +394,8 @@ function openModalItem() { document.getElementById('modal-item').classList.add('
 function openModalGasto() { document.getElementById('modal-gasto').classList.add('open'); }
 function openModalVenta() { actualizarSelectorVenta(); document.getElementById('modal-venta').classList.add('open'); }
 function openModalCombo() { 
-    document.getElementById('combo-items-select').innerHTML = DB.items.map(i => `<option value="${i.id}">${i.nombre}</option>`).join('');
+    const s = document.getElementById('combo-items-select');
+    s.innerHTML = DB.items.map(i => `<option value="${i.id}">${i.nombre}</option>`).join('');
     document.getElementById('modal-combo').classList.add('open'); 
 }
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
@@ -384,17 +406,45 @@ function actualizarSelectorVenta() {
     s.innerHTML = (tipo === 'producto' ? DB.items : DB.combos).map(x => `<option value="${x.id}">${x.nombre}</option>`).join('');
 }
 
-// INIT
+function exportarCSV() {
+    let csv = "Fecha,Tipo,Nombre,Monto,Costo_Asociado\n";
+    DB.ventas.forEach(v => csv += `${v.fecha},VENTA,${v.nombre},${v.total},${v.costo}\n`);
+    DB.gastos.forEach(g => csv += `${g.fecha},GASTO,${g.nombre},${g.monto},${g.monto}\n`);
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `MateYPunto_Backup_${new Date().toISOString().slice(0,10)}.csv`;
+    a.click();
+}
+
+function showToast(m) {
+    const t = document.getElementById('toast');
+    t.textContent = m; t.style.display = 'block';
+    setTimeout(() => t.style.display = 'none', 2000);
+}
+
+function toggleLoading(show) { document.getElementById('loading').style.display = show ? 'flex' : 'none'; }
+
+// =============================================
+// INICIO
+// =============================================
 (async function init() {
     const t = localStorage.getItem(LS_TOKEN), g = localStorage.getItem(LS_GIST);
     if(t && g) {
         document.getElementById('setup-screen').style.display = 'none';
         document.getElementById('app-header').style.display = 'flex';
         document.getElementById('app-main').style.display = 'block';
-        const res = await fetch(`https://api.github.com/gists/${g}`, { headers: { Authorization: `token ${t}` } });
-        const json = await res.json();
-        DB = JSON.parse(json.files['mate.json'].content);
-        renderAll();
+        toggleLoading(true);
+        try {
+            const res = await fetch(`https://api.github.com/gists/${g}`, { headers: { Authorization: `token ${t}` } });
+            const json = await res.json();
+            if(json.files["mate.json"]) {
+                DB = JSON.parse(json.files["mate.json"].content);
+                renderAll();
+            }
+        } catch(e) { console.error("Error al cargar datos."); }
+        toggleLoading(false);
     }
 })();
 </script>
