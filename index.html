@@ -15,875 +15,452 @@
   --radius: 10px; --font-display: 'DM Serif Display', serif; --font-mono: 'DM Mono', monospace;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--text);font-family:var(--font-mono);font-size:13px;min-height:100vh;line-height:1.6}
-::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+body{background:var(--bg);color:var(--text);font-family:var(--font-mono);font-size:13px;min-height:100vh;line-height:1.6;overflow-x:hidden}
 .app{display:flex;flex-direction:column;min-height:100vh}
 header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--surface);position:sticky;top:0;z-index:100;gap:12px;flex-wrap:wrap}
 .logo{font-family:var(--font-display);font-size:22px;color:var(--amber);letter-spacing:-0.5px}
-.logo span{color:var(--text3);font-size:13px;font-family:var(--font-mono);margin-left:8px}
 .header-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.sync-status{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text3);padding:4px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:20px;white-space:nowrap}
-.sync-dot{width:7px;height:7px;border-radius:50%;background:var(--text3);flex-shrink:0}
+.sync-status{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text3);padding:4px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:20px}
+.sync-dot{width:7px;height:7px;border-radius:50%;background:var(--text3)}
 .sync-dot.ok{background:var(--green-light)}.sync-dot.syncing{background:#d4a042;animation:pulse 1s infinite}.sync-dot.error{background:var(--red-light)}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
 nav{display:flex;gap:2px;background:var(--surface2);padding:4px;border-radius:var(--radius)}
-.nav-btn{background:none;border:none;color:var(--text2);padding:6px 14px;border-radius:7px;cursor:pointer;font-family:var(--font-mono);font-size:12px;transition:all 0.15s;white-space:nowrap}
-.nav-btn:hover{color:var(--text)}.nav-btn.active{background:var(--surface3);color:var(--amber)}
+.nav-btn{background:none;border:none;color:var(--text2);padding:6px 14px;border-radius:7px;cursor:pointer;font-family:var(--font-mono);font-size:12px;transition:all 0.15s}
+.nav-btn.active{background:var(--surface3);color:var(--amber)}
 main{flex:1;padding:20px;max-width:960px;margin:0 auto;width:100%}
 .view{display:none}.view.active{display:block}
 .page-title{font-family:var(--font-display);font-size:28px;color:var(--text);margin-bottom:4px}
 .page-sub{color:var(--text3);font-size:12px;margin-bottom:24px}
 .cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-bottom:24px}
 .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px}
-.stat-label{color:var(--text3);font-size:11px;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px}
+.stat-label{color:var(--text3);font-size:11px;text-transform:uppercase;margin-bottom:6px}
 .stat-value{font-family:var(--font-display);font-size:26px;color:var(--amber)}
-.stat-value.green{color:var(--green-light)}.stat-value.red{color:var(--red-light)}
 .section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px}
-.section-title{font-family:var(--font-display);font-size:18px;color:var(--text)}
-.btn{background:var(--amber-dim);border:1px solid var(--amber);color:var(--amber-light);padding:8px 16px;border-radius:7px;cursor:pointer;font-family:var(--font-mono);font-size:12px;transition:all 0.15s;white-space:nowrap}
+.section-title{font-family:var(--font-display);font-size:18px}
+.btn{background:var(--amber-dim);border:1px solid var(--amber);color:var(--amber-light);padding:8px 16px;border-radius:7px;cursor:pointer;font-family:var(--font-mono);font-size:12px;transition:all 0.15s}
 .btn:hover{background:var(--amber);color:#0e0d0b}
-.btn.secondary{background:var(--surface2);border-color:var(--border2);color:var(--text2)}.btn.secondary:hover{border-color:var(--text2);color:var(--text)}
-.btn.danger{background:var(--red);border-color:var(--red-light);color:#ffd0d0}.btn.danger:hover{background:var(--red-light);color:#fff}
-.btn.green-btn{background:var(--green);border-color:var(--green-light);color:#d0ffe0}.btn.green-btn:hover{background:var(--green-light);color:#0e0d0b}
-.btn.sm{padding:5px 10px;font-size:11px}.btn:disabled{opacity:0.45;cursor:not-allowed}
+.btn.secondary{background:var(--surface2);border-color:var(--border2);color:var(--text2)}
+.btn.danger{background:var(--red);border-color:var(--red-light);color:#ffd0d0}
+.btn.sm{padding:5px 10px;font-size:11px}.btn:disabled{opacity:0.45}
 .table-wrap{overflow-x:auto;border-radius:var(--radius);border:1px solid var(--border)}
-table{width:100%;border-collapse:collapse}thead{background:var(--surface2)}
-th{padding:10px 14px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:var(--text3);font-weight:500;white-space:nowrap}
-td{padding:10px 14px;border-top:1px solid var(--border);vertical-align:middle}tr:hover td{background:var(--surface)}
-.category-badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;text-transform:uppercase;letter-spacing:0.05em;font-weight:500}
-.cat-mate{background:#2a1a08;color:#c8852a;border:1px solid #4a2e10}.cat-termo{background:#08201a;color:#42b88a;border:1px solid #0e3a2a}
-.cat-bombilla{background:#20182a;color:#a078d4;border:1px solid #3a2850}.cat-yerbera{background:#1a2008;color:#88b842;border:1px solid #2e3a10}
-.cat-otros{background:#201818;color:#d47878;border:1px solid #3a2020}
+table{width:100%;border-collapse:collapse}
+th{padding:10px 14px;text-align:left;font-size:10px;text-transform:uppercase;color:var(--text3);background:var(--surface2)}
+td{padding:10px 14px;border-top:1px solid var(--border);vertical-align:middle}
+.category-badge{padding:2px 8px;border-radius:20px;font-size:10px;text-transform:uppercase}
+.cat-mate{background:#2a1a08;color:#c8852a;border:1px solid #4a2e10}
+.cat-termo{background:#08201a;color:#42b88a;border:1px solid #0e3a2a}
 .stock-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:11px}
-.stock-ok{background:#0e2018;color:var(--green-light);border:1px solid #1a4028}.stock-low{background:#201408;color:#d4a042;border:1px solid #3a2a10}
+.stock-ok{background:#0e2018;color:var(--green-light);border:1px solid #1a4028}
+.stock-low{background:#201408;color:#d4a042;border:1px solid #3a2a10}
 .stock-out{background:#200808;color:var(--red-light);border:1px solid #3a1010}
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:1000;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(3px)}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:1000;align-items:center;justify-content:center;padding:16px;backdrop-filter:blur(4px)}
 .modal-overlay.open{display:flex}
-.modal{background:var(--surface);border:1px solid var(--border2);border-radius:14px;padding:24px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;animation:slideUp 0.2s ease}
-@keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
-.modal-title{font-family:var(--font-display);font-size:20px;color:var(--text);margin-bottom:20px;display:flex;align-items:center;justify-content:space-between}
-.modal-close{background:none;border:none;color:var(--text3);cursor:pointer;font-size:20px;padding:0 4px;line-height:1}.modal-close:hover{color:var(--text)}
-.form-group{margin-bottom:16px}.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px}
-input,select,textarea{width:100%;background:var(--surface2);border:1px solid var(--border2);color:var(--text);padding:9px 12px;border-radius:7px;font-family:var(--font-mono);font-size:13px;transition:border-color 0.15s;outline:none}
-input:focus,select:focus,textarea:focus{border-color:var(--amber-dim)}input[type="number"]{appearance:textfield}select option{background:var(--surface2)}
-.token-input{font-family:var(--font-mono);font-size:12px;letter-spacing:0.05em}
-.modal-footer{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--border)}
-.venta-items-list{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:12px;margin-bottom:12px;min-height:60px}
-.venta-item-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)}.venta-item-row:last-child{border-bottom:none}
-.venta-item-name{flex:1;color:var(--text)}.venta-item-qty-ctrl{display:flex;align-items:center;gap:6px}
-.qty-btn{background:var(--surface3);border:1px solid var(--border2);color:var(--text);width:24px;height:24px;border-radius:5px;cursor:pointer;font-size:14px;line-height:1;display:flex;align-items:center;justify-content:center}
-.qty-btn:hover{border-color:var(--amber);color:var(--amber)}.venta-item-price-input{width:90px;padding:5px 8px;font-size:12px}
-.venta-total-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-top:1px solid var(--border2);margin-top:8px}
-.venta-total-label{color:var(--text3);font-size:12px;text-transform:uppercase;letter-spacing:0.08em}
-.venta-total-value{font-family:var(--font-display);font-size:24px;color:var(--amber)}
-.stock-selector{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:10px;margin-bottom:10px;max-height:200px;overflow-y:auto}
-.stock-select-item{display:flex;align-items:center;justify-content:space-between;padding:7px 8px;border-radius:6px;cursor:pointer;transition:background 0.1s}.stock-select-item:hover{background:var(--surface3)}
-.historial-list{display:flex;flex-direction:column;gap:8px}
-.historial-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px}
-.historial-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
-.historial-fecha{color:var(--text3);font-size:11px}.historial-total{font-family:var(--font-display);font-size:18px;color:var(--amber)}
-.historial-items-list{display:flex;flex-wrap:wrap;gap:6px}
-.historial-item-chip{background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:2px 10px;font-size:11px;color:var(--text2)}
-.report-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-bottom:24px}
-.report-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px}
-.report-card-title{font-family:var(--font-display);font-size:15px;color:var(--text2);margin-bottom:14px}
-.report-item{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border);font-size:12px}.report-item:last-child{border-bottom:none}
-.report-item-name{color:var(--text2)}.report-item-val{color:var(--amber);font-weight:500}
-.filter-bar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}.filter-bar input,.filter-bar select{flex:1;min-width:120px;max-width:200px}
-.empty-state{text-align:center;padding:40px 20px;color:var(--text3)}.empty-state .empty-icon{font-size:40px;margin-bottom:12px;opacity:0.5}.empty-state p{font-size:13px}
-.period-tabs{display:flex;gap:4px;background:var(--surface2);padding:4px;border-radius:var(--radius);margin-bottom:20px;width:fit-content}
-.period-tab{background:none;border:none;color:var(--text2);padding:6px 16px;border-radius:7px;cursor:pointer;font-family:var(--font-mono);font-size:12px;transition:all 0.15s}
-.period-tab.active{background:var(--surface3);color:var(--amber)}
-#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--surface3);border:1px solid var(--amber-dim);color:var(--amber-light);padding:10px 20px;border-radius:30px;font-size:12px;z-index:9999;transition:transform 0.25s cubic-bezier(0.34,1.56,0.64,1);white-space:nowrap}
-#toast.show{transform:translateX(-50%) translateY(0)}
+.modal{background:var(--surface);border:1px solid var(--border2);border-radius:14px;padding:24px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto}
+.form-group{margin-bottom:16px}
+input,select,textarea{width:100%;background:var(--surface2);border:1px solid var(--border2);color:var(--text);padding:10px;border-radius:7px;font-family:var(--font-mono);outline:none}
 .productos-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
-.producto-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;transition:border-color 0.15s;position:relative}.producto-card:hover{border-color:var(--border2)}
-.producto-card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
-.producto-card-name{font-size:14px;color:var(--text);font-weight:500;line-height:1.3}.producto-card-meta{color:var(--text3);font-size:11px;margin-top:2px}
-.producto-card-prices{display:flex;justify-content:space-between;margin:10px 0;padding:8px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
-.price-block{text-align:center}.price-lbl{color:var(--text3);font-size:10px;text-transform:uppercase;letter-spacing:0.06em}.price-val{color:var(--text);font-size:13px;margin-top:2px}.price-val.highlight{color:var(--amber)}
-.producto-card-actions{display:flex;gap:6px;margin-top:10px}
-.stock-qty-control{display:flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:4px 8px;margin-top:8px}
-.stock-qty-num{font-size:15px;font-family:var(--font-display);color:var(--text);min-width:24px;text-align:center}
-.combo-indicator{position:absolute;top:10px;right:10px;background:var(--amber-dim);border:1px solid var(--amber);color:var(--amber-light);font-size:9px;text-transform:uppercase;letter-spacing:0.08em;padding:2px 6px;border-radius:4px}
-
-/* SETUP */
-#setup-screen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:2000;padding:20px}
-.setup-card{background:var(--surface);border:1px solid var(--border2);border-radius:16px;padding:32px;width:100%;max-width:460px}
-.setup-logo{font-family:var(--font-display);font-size:32px;color:var(--amber);margin-bottom:6px}
-.setup-sub{color:var(--text3);font-size:12px;margin-bottom:28px;line-height:1.7}
-.setup-steps{counter-reset:step;margin-bottom:24px}
-.setup-step{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--border)}.setup-step:last-child{border-bottom:none}
-.step-num{background:var(--surface3);border:1px solid var(--border2);color:var(--amber);font-size:11px;font-weight:600;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
-.step-text{color:var(--text2);font-size:12px;line-height:1.6}.step-text strong{color:var(--text)}.step-text a{color:var(--amber-light);text-decoration:none}.step-text a:hover{text-decoration:underline}
-.setup-error{color:var(--red-light);font-size:12px;margin-top:10px;display:none}
-
-/* LOADING */
-#loading-overlay{position:fixed;inset:0;background:rgba(14,13,11,0.85);display:none;align-items:center;justify-content:center;z-index:1500;flex-direction:column;gap:14px}
+.producto-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;position:relative}
+.historial-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:10px}
+.historial-header{display:flex;justify-content:space-between;align-items:flex-start}
+.historial-items-list{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.historial-item-chip{background:var(--surface2);padding:2px 10px;border-radius:20px;font-size:11px;color:var(--text2);border:1px solid var(--border)}
+#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--surface3);border:1px solid var(--amber-dim);color:var(--amber-light);padding:12px 24px;border-radius:30px;z-index:9999;transition:0.3s}
+#toast.show{transform:translateX(-50%) translateY(0)}
+#loading-overlay{position:fixed;inset:0;background:var(--bg);display:none;align-items:center;justify-content:center;z-index:2000;flex-direction:column;gap:15px}
 #loading-overlay.show{display:flex}
-.loading-spinner{width:32px;height:32px;border:2px solid var(--border2);border-top-color:var(--amber);border-radius:50%;animation:spin 0.7s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}.loading-text{color:var(--text3);font-size:12px}
-
-@media(max-width:600px){
-  header{flex-wrap:wrap;gap:10px}.form-row{grid-template-columns:1fr}main{padding:14px}
-  .cards-grid{grid-template-columns:1fr 1fr}.logo span{display:none}nav{overflow-x:auto}.nav-btn{padding:6px 10px;font-size:11px}
-}
+.spinner{width:30px;height:30px;border:3px solid var(--border2);border-top-color:var(--amber);border-radius:50%;animation:spin 0.8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
 
-<div id="setup-screen">
-  <div class="setup-card">
-    <div class="setup-logo">🧉 Mate y Punto</div>
-    <div class="setup-sub">Para guardar tus datos en la nube necesitás conectar tu cuenta de GitHub una sola vez. Los datos se almacenan en un Gist privado tuyo.</div>
-    <div id="setup-initial-form">
-        <div class="setup-steps">
-        <div class="setup-step">
-            <div class="step-num">1</div>
-            <div class="step-text">
-            Entrá a <a href="https://github.com/settings/tokens/new?description=MateYPunto&scopes=gist" target="_blank">GitHub → Settings → Tokens</a> y creá un token con el permiso <strong>gist</strong>.
-            </div>
-        </div>
-        </div>
-        <div class="form-group">
-        <label>Token de GitHub</label>
-        <input type="password" id="setup-token" class="token-input" placeholder="ghp_xxxxxxxxxxxxxxxx" autocomplete="off">
-        </div>
-        <div class="setup-error" id="setup-error"></div>
-        <button class="btn" style="width:100%;margin-top:8px" onclick="conectarGist()" id="setup-btn">Conectar y comenzar →</button>
-    </div>
+<div id="setup-screen" style="position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:1500;padding:20px">
+  <div class="modal" style="max-width:400px;text-align:center">
+    <div class="logo" style="font-size:32px;margin-bottom:10px">Mate y Punto</div>
+    <p style="color:var(--text3);margin-bottom:20px">Configura tu token de GitHub para empezar.</p>
+    <input type="password" id="setup-token" placeholder="ghp_xxxx" style="margin-bottom:15px">
+    <button class="btn" style="width:100%" onclick="conectarGist()">Conectar →</button>
+    <div id="setup-error" style="color:var(--red-light);margin-top:10px;display:none"></div>
   </div>
 </div>
 
-<div id="loading-overlay">
-  <div class="loading-spinner"></div>
-  <div class="loading-text" id="loading-text">Sincronizando...</div>
-</div>
+<div id="loading-overlay"><div class="spinner"></div><div id="loading-text">Cargando...</div></div>
 
 <div class="app" id="main-app" style="display:none">
   <header>
-    <div class="logo">🧉 Mate y Punto <span>stock & ventas</span></div>
+    <div class="logo">🧉 Mate y Punto</div>
     <div class="header-right">
-      <div class="sync-status" id="sync-status">
-        <div class="sync-dot" id="sync-dot"></div>
-        <span id="sync-label">–</span>
-      </div>
+      <div class="sync-status"><div class="sync-dot ok" id="sync-dot"></div><span id="sync-label">Sincronizado</span></div>
       <nav>
         <button class="nav-btn active" onclick="showView('dashboard')">Inicio</button>
         <button class="nav-btn" onclick="showView('stock')">Stock</button>
         <button class="nav-btn" onclick="showView('ventas')">Ventas</button>
-        <button class="nav-btn" onclick="showView('reportes')">Reportes</button>
       </nav>
-      <button class="btn secondary sm" onclick="abrirConfig()" title="Configuración">⚙</button>
+      <button class="btn secondary sm" onclick="abrirConfig()">⚙</button>
     </div>
   </header>
 
   <main>
     <div class="view active" id="view-dashboard">
       <div class="section-header">
-          <div>
-            <div class="page-title">Panel general</div>
-            <div class="page-sub" id="dashboard-fecha"></div>
-          </div>
-          <button class="btn green-btn sm" onclick="copiarLinkSincro()">🔗 Copiar Link de Acceso (Celular)</button>
+        <div class="page-title">Panel</div>
+        <button class="btn secondary sm" onclick="copiarLinkSincro()">🔗 Link Celular</button>
       </div>
-      
       <div class="cards-grid">
-        <div class="stat-card"><div class="stat-label">Productos en stock</div><div class="stat-value" id="stat-total-items">0</div></div>
-        <div class="stat-card"><div class="stat-label">Unidades disponibles</div><div class="stat-value green" id="stat-unidades">0</div></div>
-        <div class="stat-card"><div class="stat-label">Ventas hoy</div><div class="stat-value" id="stat-ventas-hoy">$0</div></div>
-        <div class="stat-card"><div class="stat-label">Ganancia hoy</div><div class="stat-value green" id="stat-ganancia-hoy">$0</div></div>
+        <div class="stat-card"><div class="stat-label">Stock Total</div><div class="stat-value" id="stat-unidades">0</div></div>
+        <div class="stat-card"><div class="stat-label">Ventas Hoy</div><div class="stat-value" id="stat-ventas-hoy">$0</div></div>
+        <div class="stat-card"><div class="stat-label">Ganancia Hoy</div><div class="stat-value" style="color:var(--green-light)" id="stat-ganancia-hoy">$0</div></div>
       </div>
-      <div class="section-header"><div class="section-title">Stock bajo o agotado</div></div>
-      <div id="alerta-stock"></div>
-      <div class="section-header" style="margin-top:24px">
-        <div class="section-title">Últimas ventas</div>
-        <button class="btn secondary sm" onclick="showView('ventas')">Ver todo</button>
-      </div>
-      <div id="ultimas-ventas"></div>
+      <div class="section-title">Avisos de Stock</div>
+      <div id="alerta-stock" style="margin-top:10px"></div>
     </div>
 
     <div class="view" id="view-stock">
       <div class="section-header">
-        <div><div class="page-title">Stock</div><div class="page-sub">Administrá tus productos</div></div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <button class="btn secondary sm" onclick="exportCSV()">Exportar CSV</button>
-          <button class="btn" onclick="openModalItem()">+ Agregar producto</button>
-        </div>
-      </div>
-      <div class="filter-bar">
-        <input type="text" placeholder="Buscar..." id="filtro-buscar" oninput="renderStock()">
-        <select id="filtro-categoria" onchange="renderStock()">
-          <option value="">Todas las categorías</option>
-          <option value="mate">Mate</option><option value="termo">Termo</option>
-          <option value="bombilla">Bombilla</option><option value="yerbera">Yerbera / azucarera</option>
-          <option value="otros">Otros</option>
-        </select>
-        <select id="filtro-estado" onchange="renderStock()">
-          <option value="">Todos los estados</option>
-          <option value="disponible">Disponible</option><option value="bajo">Stock bajo</option><option value="agotado">Agotado</option>
-        </select>
+        <div class="page-title">Inventario</div>
+        <button class="btn" onclick="openModalItem()">+ Nuevo Producto</button>
       </div>
       <div class="productos-grid" id="stock-grid"></div>
     </div>
 
     <div class="view" id="view-ventas">
       <div class="section-header">
-        <div><div class="page-title">Ventas</div><div class="page-sub">Historial y nueva venta</div></div>
-        <button class="btn" onclick="openModalVenta()">+ Nueva venta</button>
+        <div class="page-title">Historial</div>
+        <button class="btn" onclick="openModalVenta()">+ Registrar Venta</button>
       </div>
-      <div class="historial-list" id="historial-ventas"></div>
-    </div>
-
-    <div class="view" id="view-reportes">
-      <div class="page-title">Reportes</div>
-      <div class="page-sub">Análisis de tu negocio</div>
-      <div class="period-tabs">
-        <button class="period-tab active" onclick="setPeriodo('dia')">Hoy</button>
-        <button class="period-tab" onclick="setPeriodo('semana')">Semana</button>
-        <button class="period-tab" onclick="setPeriodo('mes')">Mes</button>
-      </div>
-      <div class="report-grid" id="report-grid"></div>
+      <div id="historial-ventas"></div>
     </div>
   </main>
 </div>
 
-<div id="toast"></div>
-
 <div class="modal-overlay" id="modal-item">
   <div class="modal">
-    <div class="modal-title"><span id="modal-item-title">Agregar producto</span><button class="modal-close" onclick="closeModal('modal-item')">×</button></div>
-    <div class="form-row">
-      <div class="form-group"><label>Nombre *</label><input type="text" id="item-nombre" placeholder="Ej: Mate Imperial"></div>
-      <div class="form-group"><label>Categoría *</label>
-        <select id="item-categoria"><option value="mate">Mate</option><option value="termo">Termo</option><option value="bombilla">Bombilla</option><option value="yerbera">Yerbera / azucarera</option><option value="otros">Otros</option></select>
-      </div>
+    <div class="section-title" id="modal-item-title">Producto</div><br>
+    <div class="form-group"><label>Nombre</label><input type="text" id="item-nombre"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="form-group"><label>Costo</label><input type="number" id="item-costo"></div>
+        <div class="form-group"><label>Venta</label><input type="number" id="item-venta"></div>
     </div>
-    <div class="form-row">
-      <div class="form-group"><label>Precio de costo ($)</label><input type="number" id="item-precio-costo" placeholder="0" min="0" step="0.01"></div>
-      <div class="form-group"><label>Precio de venta sugerido ($)</label><input type="number" id="item-precio-venta" placeholder="0" min="0" step="0.01"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="form-group"><label>Stock Actual</label><input type="number" id="item-qty"></div>
+        <div class="form-group"><label>Stock Mínimo</label><input type="number" id="item-min" value="3"></div>
     </div>
-    <div class="form-row">
-      <div class="form-group"><label>Cantidad inicial</label><input type="number" id="item-cantidad" placeholder="0" min="0"></div>
-      <div class="form-group"><label>Stock mínimo (alerta)</label><input type="number" id="item-stock-min" placeholder="3" min="0"></div>
+    <div class="form-group"><label>Categoría</label>
+        <select id="item-cat"><option value="mate">Mate</option><option value="termo">Termo</option><option value="otros">Otros</option></select>
     </div>
-    <div class="form-group"><label>Notas / descripción</label><input type="text" id="item-notas" placeholder="Color, material, variante..."></div>
-    <div class="form-group"><label>¿Forma parte de combos?</label>
-      <select id="item-combo"><option value="si">Sí, puede incluirse en combos</option><option value="no">No, solo venta individual</option></select>
-    </div>
-    <div class="modal-footer">
-      <button class="btn secondary" onclick="closeModal('modal-item')">Cancelar</button>
-      <button class="btn" onclick="guardarItem()">Guardar producto</button>
+    <div style="display:flex;justify-content:flex-end;gap:10px">
+        <button class="btn secondary" onclick="closeModal('modal-item')">Cancelar</button>
+        <button class="btn" onclick="guardarItem()">Guardar</button>
     </div>
   </div>
 </div>
 
 <div class="modal-overlay" id="modal-venta">
-  <div class="modal" style="max-width:600px">
-    <div class="modal-title"><span>Nueva venta</span><button class="modal-close" onclick="closeModal('modal-venta')">×</button></div>
-    <div class="form-group"><label>Tipo de venta</label>
-      <select id="venta-tipo"><option value="combo">Combo (varios ítems)</option><option value="individual">Producto individual</option></select>
+    <div class="modal">
+      <div class="section-title">Nueva Venta</div><br>
+      <div id="venta-selector" style="max-height:200px;overflow-y:auto;border:1px solid var(--border);padding:10px;border-radius:8px;margin-bottom:15px"></div>
+      <div id="venta-lista-seleccionada" style="margin-bottom:15px"></div>
+      <div class="form-group"><label>Descuento ($)</label><input type="number" id="venta-desc" value="0" oninput="recalcVenta()"></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding-top:15px;border-top:1px solid var(--border2)">
+          <div class="stat-value" id="venta-total">$0</div>
+          <button class="btn" onclick="confirmarVenta()">Finalizar Venta</button>
+      </div>
     </div>
-    <div class="form-group"><label>Seleccioná productos del stock</label><div class="stock-selector" id="stock-selector"></div></div>
-    <div>
-      <label style="margin-bottom:8px;display:block">Ítems en esta venta</label>
-      <div class="venta-items-list" id="venta-items-list"><div class="empty-state" style="padding:16px"><p>Seleccioná productos arriba</p></div></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label>Descuento ($)</label><input type="number" id="venta-descuento" placeholder="0" min="0" step="0.01" oninput="calcularTotal()"></div>
-      <div class="form-group"><label>Notas de la venta</label><input type="text" id="venta-notas" placeholder="Cliente, canal, etc."></div>
-    </div>
-    <div class="venta-total-row">
-      <div><div class="venta-total-label">Total de venta</div><div style="color:var(--text3);font-size:11px" id="venta-ganancia-label"></div></div>
-      <div class="venta-total-value" id="venta-total-display">$0</div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn secondary" onclick="closeModal('modal-venta')">Cancelar</button>
-      <button class="btn green-btn" onclick="confirmarVenta()">Confirmar venta</button>
-    </div>
-  </div>
 </div>
 
-<div class="modal-overlay" id="modal-confirmar">
-  <div class="modal" style="max-width:360px">
-    <div class="modal-title"><span>Confirmar</span><button class="modal-close" onclick="closeModal('modal-confirmar')">×</button></div>
-    <p style="color:var(--text2);margin-bottom:20px" id="confirmar-msg">¿Estás seguro?</p>
-    <div class="modal-footer">
-      <button class="btn secondary" onclick="closeModal('modal-confirmar')">Cancelar</button>
-      <button class="btn danger" id="confirmar-btn">Eliminar</button>
+<div class="modal-overlay" id="modal-confirm">
+    <div class="modal" style="max-width:300px;text-align:center">
+        <div class="section-title">¿Confirmar?</div><br>
+        <p id="confirm-text" style="color:var(--text2);margin-bottom:20px"></p>
+        <div style="display:flex;gap:10px;justify-content:center">
+            <button class="btn secondary" onclick="closeModal('modal-confirm')">No</button>
+            <button class="btn danger" id="confirm-btn-action">Sí, borrar</button>
+        </div>
     </div>
-  </div>
 </div>
 
-<div class="modal-overlay" id="modal-config">
-  <div class="modal" style="max-width:420px">
-    <div class="modal-title"><span>Configuración</span><button class="modal-close" onclick="closeModal('modal-config')">×</button></div>
-    <div class="form-group"><label>Token de GitHub</label><input type="password" id="config-token" class="token-input" placeholder="ghp_xxxxxxxxxxxxxxxx"></div>
-    <div class="form-group">
-      <label>ID del Gist (solo lectura)</label>
-      <input type="text" id="config-gist-id" readonly style="opacity:0.5;cursor:default">
-    </div>
-    <p style="color:var(--text3);font-size:11px;line-height:1.7;margin-bottom:16px">El token se guarda solo en este navegador (localStorage). Nunca se envía a servidores externos.</p>
-    <div class="modal-footer">
-      <button class="btn danger sm" onclick="desconectar()">Desconectar</button>
-      <button class="btn secondary" onclick="closeModal('modal-config')">Cerrar</button>
-      <button class="btn" onclick="guardarConfig()">Guardar token</button>
-    </div>
-  </div>
-</div>
+<div id="toast"></div>
 
 <script>
-// =============================================
-// GITHUB GIST — BASE DE DATOS EN LA NUBE
-// =============================================
-const GIST_FILENAME = 'mateyPunto_data.json';
-const LS_TOKEN      = 'mp_gh_token';
-const LS_GIST_ID    = 'mp_gist_id';
+// CONFIGURACIÓN Y PERSISTENCIA
+const LS_TOKEN = 'mp_token', LS_GIST = 'mp_gist';
+let memDB = { items: [], ventas: [] };
+let ventaTemp = {};
 
-let memDB     = { items: [], ventas: [] };
-let saveTimer = null;
-let isSaving  = false;
+const getToken = () => localStorage.getItem(LS_TOKEN);
+const getGistId = () => localStorage.getItem(LS_GIST);
+const setToken = t => localStorage.setItem(LS_TOKEN, t);
+const setGistId = id => localStorage.setItem(LS_GIST, id);
 
-const getToken  = () => localStorage.getItem(LS_TOKEN);
-const getGistId = () => localStorage.getItem(LS_GIST_ID);
-const setToken  = t  => localStorage.setItem(LS_TOKEN, t);
-const setGistId = id => localStorage.setItem(LS_GIST_ID, id);
-
-function setSyncStatus(estado, label) {
-  const dot = document.getElementById('sync-dot');
-  const lbl = document.getElementById('sync-label');
-  if (!dot || !lbl) return;
-  dot.className = 'sync-dot ' + estado;
-  lbl.textContent = label;
-}
-
-function showLoading(txt) {
-  document.getElementById('loading-overlay').classList.add('show');
-  document.getElementById('loading-text').textContent = txt || 'Cargando...';
-}
-function hideLoading() { document.getElementById('loading-overlay').classList.remove('show'); }
-
-// --- FUNCIONES DE SINCRONIZACIÓN (NUEVO) ---
-function copiarLinkSincro() {
-    const token = getToken();
-    const gist = getGistId();
-    if (!token || !gist) { toast('⚠️ Primero debés estar conectado'); return; }
-    
-    // Generamos URL con parámetros (hash para seguridad)
-    const base = window.location.origin + window.location.pathname;
-    const link = `${base}?t=${token}&g=${gist}`;
-    
-    navigator.clipboard.writeText(link).then(() => {
-        toast('📋 Link copiado. Enviatelo al celular y abrilo.');
-    });
-}
-
-function procesarParametrosURL() {
-    const params = new URLSearchParams(window.location.search);
-    const t = params.get('t');
-    const g = params.get('g');
-    
-    if (t && g) {
-        setToken(t);
-        setGistId(g);
-        // Limpiamos URL por seguridad
-        window.history.replaceState({}, document.title, window.location.pathname);
-        return true;
-    }
-    return false;
-}
-// -------------------------------------------
-
-async function crearGist(token) {
-  const res = await fetch('https://api.github.com/gists', {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json', 'X-GitHub-Api-Version': '2022-11-28' },
-    body: JSON.stringify({
-      description: 'Mate y Punto — datos de stock y ventas',
-      public: false,
-      files: { [GIST_FILENAME]: { content: JSON.stringify({ items: [], ventas: [] }, null, 2) } }
-    })
-  });
-  if (!res.ok) throw new Error('No se pudo crear el Gist (' + res.status + ')');
-  const data = await res.json();
-  setGistId(data.id);
-}
-
-async function cargarDesdeGist() {
-  const token = getToken();
-  if (!token) return false;
-  setSyncStatus('syncing', 'Cargando...');
-  try {
-    if (!getGistId()) await crearGist(token);
-    const res = await fetch(`https://api.github.com/gists/${getGistId()}`, {
-      headers: { Authorization: `Bearer ${token}`, 'X-GitHub-Api-Version': '2022-11-28' }
-    });
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const data = await res.json();
-    const raw = data.files?.[GIST_FILENAME]?.content;
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      memDB.items  = parsed.items  || [];
-      memDB.ventas = parsed.ventas || [];
-    }
-    setSyncStatus('ok', 'Sincronizado');
-    return true;
-  } catch (e) {
-    console.error(e);
-    setSyncStatus('error', 'Error al cargar');
-    return false;
-  }
-}
-
-function guardarEnGist() {
-  setSyncStatus('syncing', 'Guardando...');
-  clearTimeout(saveTimer);
-  saveTimer = setTimeout(async () => {
-    if (isSaving) return;
-    isSaving = true;
-    try {
-      const res = await fetch(`https://api.github.com/gists/${getGistId()}`, {
-        method: 'PATCH',
-        headers: { Authorization: `Bearer ${getToken()}`, 'Content-Type': 'application/json', 'X-GitHub-Api-Version': '2022-11-28' },
-        body: JSON.stringify({ files: { [GIST_FILENAME]: { content: JSON.stringify(memDB, null, 2) } } })
-      });
-      if (!res.ok) throw new Error('HTTP ' + res.status);
-      setSyncStatus('ok', 'Guardado ✓');
-    } catch (e) {
-      console.error(e);
-      setSyncStatus('error', 'Error al guardar');
-      toast('❌ Error al guardar en la nube');
-    }
-    isSaving = false;
-  }, 1500);
-}
-
-const DB = {
-  get items()  { return memDB.items; },
-  set items(v) { memDB.items = v; guardarEnGist(); },
-  get ventas()  { return memDB.ventas; },
-  set ventas(v) { memDB.ventas = v; guardarEnGist(); },
-};
-
+// SINCRONIZACIÓN GITHUB
 async function conectarGist() {
-  const tokenVal = document.getElementById('setup-token').value.trim();
-  const errEl    = document.getElementById('setup-error');
-  const btn      = document.getElementById('setup-btn');
-
-  if (!tokenVal) { errEl.style.display='block'; errEl.textContent='⚠️ Ingresá el token'; return; }
-
-  errEl.style.display = 'none';
-  btn.disabled = true; btn.textContent = 'Verificando...';
-
-  try {
-    const check = await fetch('https://api.github.com/user', { headers: { Authorization: `Bearer ${tokenVal}` } });
-    if (!check.ok) throw new Error('Token inválido');
-    const user = await check.json();
-
-    setToken(tokenVal);
-    document.getElementById('setup-screen').style.display = 'none';
-    showLoading('Creando tu espacio en la nube...');
-
-    const ok = await cargarDesdeGist();
-    hideLoading();
-
-    if (ok) { iniciarApp(); toast(`👋 Bienvenido, ${user.login}`); }
-    else {
-      document.getElementById('setup-screen').style.display = 'flex';
-      btn.disabled = false; btn.textContent = 'Conectar y comenzar →';
-      errEl.style.display = 'block';
-      errEl.textContent = '❌ No se pudo conectar. Verificá que el token tenga permiso "gist".';
+    const t = document.getElementById('setup-token').value;
+    if(!t) return;
+    showLoading('Verificando...');
+    try {
+        const res = await fetch('https://api.github.com/gists', {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${t}` },
+            body: JSON.stringify({ public: false, files: { 'mate.json': { content: JSON.stringify(memDB) } } })
+        });
+        const data = await res.json();
+        if(res.ok) {
+            setToken(t); setGistId(data.id);
+            location.reload();
+        } else throw "Error";
+    } catch(e) {
+        document.getElementById('setup-error').style.display = 'block';
+        document.getElementById('setup-error').textContent = 'Token inválido.';
+        hideLoading();
     }
-  } catch (e) {
-    document.getElementById('setup-screen').style.display = 'flex';
-    btn.disabled = false; btn.textContent = 'Conectar y comenzar →';
-    errEl.style.display = 'block';
-    errEl.textContent = '❌ Token inválido o sin permisos.';
-  }
 }
 
-function iniciarApp() {
-  document.getElementById('setup-screen').style.display = 'none';
-  document.getElementById('main-app').style.display     = 'flex';
-  renderDashboard();
+async function sincronizar() {
+    const t = getToken(), g = getGistId();
+    if(!t || !g) return;
+    setStatus('syncing');
+    try {
+        const res = await fetch(`https://api.github.com/gists/${g}`, {
+            method: 'PATCH',
+            headers: { Authorization: `Bearer ${t}` },
+            body: JSON.stringify({ files: { 'mate.json': { content: JSON.stringify(memDB) } } })
+        });
+        if(res.ok) setStatus('ok');
+    } catch(e) { setStatus('error'); }
 }
 
-function abrirConfig() {
-  document.getElementById('config-token').value   = getToken()  || '';
-  document.getElementById('config-gist-id').value = getGistId() || '';
-  openModal('modal-config');
+async function cargar() {
+    const t = getToken(), g = getGistId();
+    try {
+        const res = await fetch(`https://api.github.com/gists/${g}`, { headers: { Authorization: `Bearer ${t}` } });
+        const data = await res.json();
+        memDB = JSON.parse(data.files['mate.json'].content);
+        return true;
+    } catch(e) { return false; }
 }
 
-function guardarConfig() {
-  const t = document.getElementById('config-token').value.trim();
-  if (t) setToken(t);
-  closeModal('modal-config');
-  toast('✅ Token actualizado');
-}
-
-function desconectar() {
-  if (!confirm('¿Desconectar?')) return;
-  localStorage.removeItem(LS_TOKEN);
-  localStorage.removeItem(LS_GIST_ID);
-  location.reload();
-}
-
-// =============================================
-// UTILS & RENDER (Se mantienen igual)
-// =============================================
-const fmt      = n  => '$' + parseFloat(n||0).toLocaleString('es-AR', {minimumFractionDigits:0, maximumFractionDigits:2});
-const uid      = () => Date.now().toString(36) + Math.random().toString(36).slice(2);
-const fmtFecha = ts => new Date(ts).toLocaleDateString('es-AR', {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
-
-function toast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2500);
-}
-
-function showView(v) {
-  document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
-  document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
-  document.getElementById('view-' + v).classList.add('active');
-  document.querySelectorAll('.nav-btn').forEach(b => { if (b.getAttribute('onclick').includes(v)) b.classList.add('active'); });
-  if (v==='dashboard') renderDashboard();
-  if (v==='stock')     renderStock();
-  if (v==='ventas')    renderVentas();
-  if (v==='reportes')  renderReportes();
-}
-
-function openModal(id)  { document.getElementById(id).classList.add('open'); }
-function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-
-const CAT_LABELS  = { mate:'Mate', termo:'Termo', bombilla:'Bombilla', yerbera:'Yerbera / azucarera', otros:'Otros' };
-const CAT_CLASSES = { mate:'cat-mate', termo:'cat-termo', bombilla:'cat-bombilla', yerbera:'cat-yerbera', otros:'cat-otros' };
-
-function catBadge(cat) {
-  return `<span class="category-badge ${CAT_CLASSES[cat]||'cat-otros'}">${CAT_LABELS[cat]||cat}</span>`;
-}
-function stockBadge(item) {
-  const q = item.cantidad||0, min = item.stockMin||3;
-  if (q===0)    return `<span class="stock-badge stock-out">⬤ Agotado</span>`;
-  if (q<=min)   return `<span class="stock-badge stock-low">⬤ ${q} bajo</span>`;
-  return `<span class="stock-badge stock-ok">⬤ ${q}</span>`;
-}
-
-function renderDashboard() {
-  const hoy = new Date();
-  document.getElementById('dashboard-fecha').textContent =
-    hoy.toLocaleDateString('es-AR',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-
-  const items=DB.items, ventas=DB.ventas, hoyStr=hoy.toDateString();
-  const vhoy  = ventas.filter(v=>new Date(v.ts).toDateString()===hoyStr);
-  const total = vhoy.reduce((s,v)=>s+v.total,0);
-  const costo = vhoy.reduce((s,v)=>s+v.items.reduce((ss,vi)=>{
-    const it=items.find(i=>i.id===vi.id); return ss+(it?(it.precioCosto||0)*vi.qty:0);
-  },0),0);
-
-  document.getElementById('stat-total-items').textContent  = items.length;
-  document.getElementById('stat-unidades').textContent     = items.reduce((s,i)=>s+(i.cantidad||0),0);
-  document.getElementById('stat-ventas-hoy').textContent   = fmt(total);
-  document.getElementById('stat-ganancia-hoy').textContent = fmt(total-costo);
-
-  const alertas = items.filter(i=>(i.cantidad||0)<=(i.stockMin||3));
-  document.getElementById('alerta-stock').innerHTML = alertas.length===0
-    ? `<div class="empty-state" style="padding:16px"><p>✅ Todo el stock está en orden</p></div>`
-    : `<div class="table-wrap"><table><thead><tr><th>Producto</th><th>Categoría</th><th>Disponible</th><th>Mínimo</th></tr></thead><tbody>
-        ${alertas.map(i=>`<tr><td>${i.nombre}</td><td>${catBadge(i.categoria)}</td><td>${stockBadge(i)}</td><td style="color:var(--text3)">${i.stockMin||3}</td></tr>`).join('')}
-       </tbody></table></div>`;
-
-  const ultimas = [...ventas].reverse().slice(0,4);
-  document.getElementById('ultimas-ventas').innerHTML = ultimas.length===0
-    ? `<div class="empty-state" style="padding:16px"><p>Sin ventas registradas aún</p></div>`
-    : `<div class="historial-list">${ultimas.map(v=>ventaCard(v)).join('')}</div>`;
-}
-
-function renderStock() {
-  const buscar = (document.getElementById('filtro-buscar')?.value||'').toLowerCase();
-  const cat    = document.getElementById('filtro-categoria')?.value||'';
-  const estado = document.getElementById('filtro-estado')?.value||'';
-
-  const filtrados = DB.items.filter(i=>{
-    if (buscar && !i.nombre.toLowerCase().includes(buscar) && !(i.notas||'').toLowerCase().includes(buscar)) return false;
-    if (cat && i.categoria!==cat) return false;
-    if (estado) {
-      const q=i.cantidad||0, min=i.stockMin||3;
-      if (estado==='disponible' && q<=min) return false;
-      if (estado==='bajo'       && (q===0||q>min)) return false;
-      if (estado==='agotado'    && q!==0) return false;
-    }
-    return true;
-  });
-
-  const grid = document.getElementById('stock-grid');
-  if (filtrados.length===0) {
-    grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">📦</div><p>No hay productos.</p></div>`;
-    return;
-  }
-  grid.innerHTML = filtrados.map(item=>`
-    <div class="producto-card">
-      ${item.esCombo==='si'?'<div class="combo-indicator">combo</div>':''}
-      <div class="producto-card-top">
-        <div>
-          ${catBadge(item.categoria)}
-          <div class="producto-card-name" style="margin-top:6px">${item.nombre}</div>
-          ${item.notas?`<div class="producto-card-meta">${item.notas}</div>`:''}
-        </div>
-      </div>
-      <div class="producto-card-prices">
-        <div class="price-block"><div class="price-lbl">Costo</div><div class="price-val">${item.precioCosto?fmt(item.precioCosto):'—'}</div></div>
-        <div class="price-block"><div class="price-lbl">Venta</div><div class="price-val highlight">${item.precioVenta?fmt(item.precioVenta):'—'}</div></div>
-      </div>
-      <div>${stockBadge(item)}</div>
-      <div class="stock-qty-control">
-        <button class="qty-btn" onclick="cambiarQty('${item.id}',-1)">−</button>
-        <span class="stock-qty-num">${item.cantidad||0}</span>
-        <button class="qty-btn" onclick="cambiarQty('${item.id}',1)">+</button>
-        <span style="color:var(--text3);font-size:11px;margin-left:4px">unid.</span>
-      </div>
-      <div class="producto-card-actions" style="margin-top:10px">
-        <button class="btn secondary sm" onclick="editarItem('${item.id}')" style="flex:1">Editar</button>
-        <button class="btn danger sm" onclick="confirmarEliminar('${item.id}')">🗑</button>
-      </div>
-    </div>`).join('');
-}
-
-function cambiarQty(id, delta) {
-  const items=[...DB.items], idx=items.findIndex(i=>i.id===id);
-  if (idx<0) return;
-  items[idx].cantidad=Math.max(0,(items[idx].cantidad||0)+delta);
-  DB.items=items; renderStock(); renderDashboard();
-}
-
-let editingItemId=null;
-function openModalItem() {
-  editingItemId=null;
-  document.getElementById('modal-item-title').textContent='Agregar producto';
-  ['item-nombre','item-precio-costo','item-precio-venta','item-notas'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('item-categoria').value='mate';
-  document.getElementById('item-cantidad').value='';
-  document.getElementById('item-stock-min').value='3';
-  document.getElementById('item-combo').value='si';
-  openModal('modal-item');
-}
-
-function editarItem(id) {
-  const item=DB.items.find(i=>i.id===id); if (!item) return;
-  editingItemId=id;
-  document.getElementById('modal-item-title').textContent='Editar producto';
-  document.getElementById('item-nombre').value        = item.nombre;
-  document.getElementById('item-categoria').value     = item.categoria;
-  document.getElementById('item-precio-costo').value  = item.precioCosto||'';
-  document.getElementById('item-precio-venta').value  = item.precioVenta||'';
-  document.getElementById('item-cantidad').value      = item.cantidad||0;
-  document.getElementById('item-stock-min').value     = item.stockMin||3;
-  document.getElementById('item-notas').value         = item.notas||'';
-  document.getElementById('item-combo').value         = item.esCombo||'si';
-  openModal('modal-item');
-}
-
+// LOGICA DE NEGOCIO
 function guardarItem() {
-  const nombre=document.getElementById('item-nombre').value.trim();
-  if (!nombre) { toast('⚠️ El nombre es obligatorio'); return; }
-  const item = {
-    id: editingItemId||uid(), nombre,
-    categoria:    document.getElementById('item-categoria').value,
-    precioCosto:  parseFloat(document.getElementById('item-precio-costo').value)||0,
-    precioVenta:  parseFloat(document.getElementById('item-precio-venta').value)||0,
-    cantidad:     parseInt(document.getElementById('item-cantidad').value)||0,
-    stockMin:     parseInt(document.getElementById('item-stock-min').value)||3,
-    notas:        document.getElementById('item-notas').value.trim(),
-    esCombo:      document.getElementById('item-combo').value,
-  };
-  const items=[...DB.items];
-  if (editingItemId) { items[items.findIndex(i=>i.id===editingItemId)]=item; toast('✅ Producto actualizado'); }
-  else               { items.push(item); toast('✅ Producto agregado'); }
-  DB.items=items; closeModal('modal-item'); renderStock(); renderDashboard();
-}
-
-function confirmarEliminar(id) {
-  const item=DB.items.find(i=>i.id===id);
-  document.getElementById('confirmar-msg').textContent=`¿Eliminás "${item.nombre}"?`;
-  document.getElementById('confirmar-btn').onclick=()=>{
-    DB.items=DB.items.filter(i=>i.id!==id);
-    closeModal('modal-confirmar'); renderStock(); renderDashboard(); toast('🗑 Producto eliminado');
-  };
-  openModal('modal-confirmar');
-}
-
-let ventaItemsSelected={};
-function openModalVenta() {
-  ventaItemsSelected={};
-  document.getElementById('venta-descuento').value='';
-  document.getElementById('venta-notas').value='';
-  renderStockSelector(); renderVentaItems();
-  openModal('modal-venta');
-}
-
-function renderStockSelector() {
-  const items=DB.items.filter(i=>(i.cantidad||0)>0);
-  const el=document.getElementById('stock-selector');
-  if (items.length===0) { el.innerHTML='<div style="color:var(--text3);font-size:12px;padding:8px">Sin stock disponible</div>'; return; }
-  el.innerHTML=items.map(item=>`
-    <div class="stock-select-item" onclick="toggleVentaItem('${item.id}')">
-      <div><span style="color:var(--text)">${item.nombre}</span><span style="margin-left:8px">${catBadge(item.categoria)}</span></div>
-      <div style="color:var(--text3);font-size:11px">${item.precioVenta?fmt(item.precioVenta):'—'} · stock: ${item.cantidad}</div>
-    </div>`).join('');
-}
-
-function toggleVentaItem(id) {
-  const item=DB.items.find(i=>i.id===id); if (!item) return;
-  if (ventaItemsSelected[id]) delete ventaItemsSelected[id];
-  else ventaItemsSelected[id]={qty:1, precioUnitario:item.precioVenta||0};
-  renderVentaItems();
-}
-
-function renderVentaItems() {
-  const el=document.getElementById('venta-items-list');
-  const ids=Object.keys(ventaItemsSelected);
-  if (ids.length===0) { el.innerHTML='<div class="empty-state" style="padding:16px"><p>Seleccioná productos arriba</p></div>'; calcularTotal(); return; }
-  el.innerHTML=ids.map(id=>{
-    const item=DB.items.find(i=>i.id===id), sel=ventaItemsSelected[id];
-    return `<div class="venta-item-row">
-      <div class="venta-item-name">${item.nombre}</div>
-      <div class="venta-item-qty-ctrl">
-        <button class="qty-btn" onclick="cambiarVentaQty('${id}',-1)">−</button>
-        <span style="min-width:20px;text-align:center">${sel.qty}</span>
-        <button class="qty-btn" onclick="cambiarVentaQty('${id}',1)">+</button>
-      </div>
-      <input type="number" class="venta-item-price-input" value="${sel.precioUnitario}" oninput="setPrecioVentaItem('${id}',this.value)">
-      <button class="btn danger sm" onclick="quitarVentaItem('${id}')">✕</button>
-    </div>`;
-  }).join('');
-  calcularTotal();
-}
-
-function cambiarVentaQty(id,delta) {
-  const item=DB.items.find(i=>i.id===id);
-  ventaItemsSelected[id].qty=Math.max(1,Math.min(item?.cantidad||99,ventaItemsSelected[id].qty+delta));
-  renderVentaItems();
-}
-function setPrecioVentaItem(id,val) { ventaItemsSelected[id].precioUnitario=parseFloat(val)||0; calcularTotal(); }
-function quitarVentaItem(id)        { delete ventaItemsSelected[id]; renderVentaItems(); }
-
-function calcularTotal() {
-  const items=DB.items; let sub=0, costo=0;
-  Object.entries(ventaItemsSelected).forEach(([id,sel])=>{
-    sub+=sel.precioUnitario*sel.qty;
-    const it=items.find(i=>i.id===id); if (it) costo+=(it.precioCosto||0)*sel.qty;
-  });
-  const desc=parseFloat(document.getElementById('venta-descuento')?.value)||0;
-  const total=Math.max(0,sub-desc);
-  document.getElementById('venta-total-display').textContent=fmt(total);
-  const gl=document.getElementById('venta-ganancia-label');
-  if (gl) gl.textContent=costo>0?`Ganancia estimada: ${fmt(total-costo)}`:'';
+    const id = editingId || Date.now().toString();
+    const item = {
+        id,
+        nombre: document.getElementById('item-nombre').value,
+        precioCosto: parseFloat(document.getElementById('item-costo').value) || 0,
+        precioVenta: parseFloat(document.getElementById('item-venta').value) || 0,
+        cantidad: parseInt(document.getElementById('item-qty').value) || 0,
+        stockMin: parseInt(document.getElementById('item-min').value) || 3,
+        categoria: document.getElementById('item-cat').value
+    };
+    const idx = memDB.items.findIndex(i => i.id === id);
+    if(idx > -1) memDB.items[idx] = item; else memDB.items.push(item);
+    sincronizar(); closeModal('modal-item'); renderStock(); renderDashboard();
 }
 
 function confirmarVenta() {
-  const ids=Object.keys(ventaItemsSelected);
-  if (ids.length===0) { toast('⚠️ Agregá productos'); return; }
-  let sub=0;
-  const ventaItems=ids.map(id=>{ const s=ventaItemsSelected[id]; sub+=s.precioUnitario*s.qty; return {id,qty:s.qty,precioUnitario:s.precioUnitario}; });
-  const desc=parseFloat(document.getElementById('venta-descuento').value)||0;
-  const total=Math.max(0,sub-desc);
+    const ids = Object.keys(ventaTemp);
+    if(ids.length === 0) return;
+    
+    let totalVenta = 0;
+    const itemsVenta = ids.map(id => {
+        const it = memDB.items.find(i => i.id === id);
+        const cant = ventaTemp[id];
+        it.cantidad -= cant;
+        totalVenta += (it.precioVenta * cant);
+        return { id, nombre: it.nombre, qty: cant, precio: it.precioVenta };
+    });
 
-  const items=DB.items.map(i=>{ const vi=ventaItems.find(v=>v.id===i.id); return vi?{...i,cantidad:Math.max(0,(i.cantidad||0)-vi.qty)}:i; });
-  DB.items=items;
+    const desc = parseFloat(document.getElementById('venta-desc').value) || 0;
+    memDB.ventas.push({
+        id: Date.now().toString(),
+        ts: Date.now(),
+        items: itemsVenta,
+        total: totalVenta - desc,
+        descuento: desc
+    });
 
-  const ventas=[...DB.ventas];
-  ventas.push({ id:uid(), ts:Date.now(), items:ventaItems, total, descuento:desc, notas:document.getElementById('venta-notas').value.trim(), tipo:document.getElementById('venta-tipo').value });
-  DB.ventas=ventas;
-
-  closeModal('modal-venta'); toast(`✅ Venta registrada: ${fmt(total)}`);
-  renderStock(); renderDashboard(); renderVentas();
+    sincronizar(); closeModal('modal-venta'); renderDashboard(); renderVentas(); renderStock();
+    toast("Venta registrada");
 }
 
-function ventaCard(v) {
-  const chips=v.items.map(vi=>{
-    const it=DB.items.find(i=>i.id===vi.id);
-    return `<span class="historial-item-chip">${it?it.nombre:'Eliminado'} ×${vi.qty}</span>`;
-  }).join('');
-  return `<div class="historial-card">
-    <div class="historial-header">
-      <div>
-        <div style="font-size:13px;color:var(--text)">${v.tipo==='combo'?'🎁 Combo':'📦 Individual'}</div>
-        <div class="historial-fecha">${fmtFecha(v.ts)}</div>
-      </div>
-      <div class="historial-total">${fmt(v.total)}</div>
-    </div>
-    <div class="historial-items-list">${chips}</div>
-  </div>`;
+// --- NUEVA FUNCIÓN: BORRAR VENTA Y REVERTIR STOCK ---
+function borrarVenta(idVenta) {
+    const vIdx = memDB.ventas.findIndex(v => v.id === idVenta);
+    if (vIdx === -1) return;
+
+    const venta = memDB.ventas[vIdx];
+    
+    // REVERSIÓN DE STOCK: Devolvemos cada item al inventario
+    venta.items.forEach(vItem => {
+        const it = memDB.items.find(i => i.id === vItem.id);
+        if (it) it.cantidad += vItem.qty;
+    });
+
+    // Eliminamos la venta del array
+    memDB.ventas.splice(vIdx, 1);
+
+    sincronizar();
+    renderVentas();
+    renderDashboard();
+    renderStock();
+    toast("Venta eliminada y stock devuelto");
+}
+
+function pedirConfirmacionBorrarVenta(id) {
+    const v = memDB.ventas.find(x => x.id === id);
+    document.getElementById('confirm-text').textContent = `¿Anular venta de $${v.total}? El stock se devolverá automáticamente.`;
+    document.getElementById('confirm-btn-action').onclick = () => {
+        borrarVenta(id);
+        closeModal('modal-confirm');
+    };
+    openModal('modal-confirm');
+}
+
+// RENDERERS
+function renderStock() {
+    const grid = document.getElementById('stock-grid');
+    grid.innerHTML = memDB.items.map(i => `
+        <div class="producto-card">
+            <div class="category-badge cat-${i.categoria}">${i.categoria}</div>
+            <div style="font-weight:bold;margin:10px 0">${i.nombre}</div>
+            <div style="font-size:16px;color:var(--amber)">$${i.precioVenta}</div>
+            <div style="margin:10px 0">${stockBadge(i)}</div>
+            <button class="btn secondary sm" style="width:100%" onclick="editarItem('${i.id}')">Editar</button>
+        </div>
+    `).join('');
 }
 
 function renderVentas() {
-  const el=document.getElementById('historial-ventas');
-  const ventas=[...DB.ventas].reverse();
-  el.innerHTML=ventas.length===0 ?`<div class="empty-state"><p>Sin ventas.</p></div>` :ventas.map(v=>ventaCard(v)).join('');
+    const hist = document.getElementById('historial-ventas');
+    hist.innerHTML = memDB.ventas.slice().reverse().map(v => `
+        <div class="historial-card">
+            <div class="historial-header">
+                <div>
+                    <div style="color:var(--text3);font-size:11px">${new Date(v.ts).toLocaleString()}</div>
+                    <div class="stat-value" style="font-size:18px">$${v.total}</div>
+                </div>
+                <button class="btn danger sm" onclick="pedirConfirmacionBorrarVenta('${v.id}')">🗑 Borrar</button>
+            </div>
+            <div class="historial-items-list">
+                ${v.items.map(i => `<span class="historial-item-chip">${i.nombre} x${i.qty}</span>`).join('')}
+            </div>
+        </div>
+    `).join('');
 }
 
-let periodoActual='dia';
-function setPeriodo(p) {
-  periodoActual=p;
-  document.querySelectorAll('.period-tab').forEach(b=>b.classList.toggle('active',b.getAttribute('onclick').includes("'"+p+"'")));
-  renderReportes();
+function renderDashboard() {
+    const hoy = new Date().toDateString();
+    const vHoy = memDB.ventas.filter(v => new Date(v.ts).toDateString() === hoy);
+    const ingresos = vHoy.reduce((a,b) => a + b.total, 0);
+    
+    document.getElementById('stat-unidades').textContent = memDB.items.reduce((a,b) => a + b.cantidad, 0);
+    document.getElementById('stat-ventas-hoy').textContent = `$${ingresos}`;
+    
+    // Alertas
+    const alertas = memDB.items.filter(i => i.cantidad <= i.stockMin);
+    document.getElementById('alerta-stock').innerHTML = alertas.map(i => `
+        <div style="background:var(--surface2);padding:10px;border-radius:8px;margin-bottom:5px;display:flex;justify-content:space-between">
+            <span>${i.nombre}</span>
+            <span style="color:var(--red-light)">Quedan ${i.cantidad}</span>
+        </div>
+    `).join('') || '<p style="color:var(--text3)">Todo en orden</p>';
 }
 
-function filtrarPeriodo(ventas, p) {
-  const ahora=new Date();
-  return ventas.filter(v=>{
-    const d=new Date(v.ts);
-    if (p==='dia')    return d.toDateString()===ahora.toDateString();
-    if (p==='semana') { const s=new Date(ahora); s.setDate(ahora.getDate()-6); return d>=s; }
-    if (p==='mes')    return d.getMonth()===ahora.getMonth()&&d.getFullYear()===ahora.getFullYear();
-    return true;
-  });
+// UI HELPERS
+let editingId = null;
+function openModalItem() { editingId = null; openModal('modal-item'); }
+function editarItem(id) { 
+    editingId = id; 
+    const i = memDB.items.find(x => x.id === id);
+    document.getElementById('item-nombre').value = i.nombre;
+    document.getElementById('item-costo').value = i.precioCosto;
+    document.getElementById('item-venta').value = i.precioVenta;
+    document.getElementById('item-qty').value = i.cantidad;
+    openModal('modal-item');
 }
 
-function renderReportes() {
-  const ventas=filtrarPeriodo(DB.ventas,periodoActual), items=DB.items;
-  const total  = ventas.reduce((s,v)=>s+v.total,0);
-  const costo  = ventas.reduce((s,v)=>s+v.items.reduce((ss,vi)=>{ const it=items.find(i=>i.id===vi.id); return ss+(it?(it.precioCosto||0)*vi.qty:0); },0),0);
-  document.getElementById('report-grid').innerHTML=`
-    <div class="report-card">
-      <div class="report-card-title">💰 Finanzas</div>
-      <div class="report-item"><span>Ingresos</span><span class="report-item-val">${fmt(total)}</span></div>
-      <div class="report-item"><span>Ganancia</span><span class="report-item-val" style="color:var(--green-light)">${fmt(total-costo)}</span></div>
-      <div class="report-item"><span>Ventas</span><span class="report-item-val">${ventas.length}</span></div>
-    </div>`;
+function openModalVenta() {
+    ventaTemp = {};
+    const sel = document.getElementById('venta-selector');
+    sel.innerHTML = memDB.items.filter(i => i.cantidad > 0).map(i => `
+        <div onclick="addTemp('${i.id}')" style="padding:8px;border-bottom:1px solid var(--border);cursor:pointer">
+            ${i.nombre} ($${i.precioVenta})
+        </div>
+    `).join('');
+    recalcVenta();
+    openModal('modal-venta');
 }
 
-function exportCSV() {
-  const items=DB.items;
-  if (items.length===0) { toast('⚠️ Sin productos'); return; }
-  const headers=['Nombre','Categoría','Precio Costo','Precio Venta','Cantidad'];
-  const rows=items.map(i=>[i.nombre,CAT_LABELS[i.categoria]||i.categoria,i.precioCosto||0,i.precioVenta||0,i.cantidad||0]);
-  const csv=[headers,...rows].map(r=>r.map(c=>`"${c}"`).join(',')).join('\n');
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
-  a.download='stock.csv'; a.click();
+function addTemp(id) {
+    ventaTemp[id] = (ventaTemp[id] || 0) + 1;
+    recalcVenta();
 }
 
-// --- INIT ACTUALIZADO ---
+function recalcVenta() {
+    let t = 0;
+    const lista = document.getElementById('venta-lista-seleccionada');
+    lista.innerHTML = Object.keys(ventaTemp).map(id => {
+        const i = memDB.items.find(x => x.id === id);
+        t += (i.precioVenta * ventaTemp[id]);
+        return `<div style="font-size:11px">${i.nombre} x${ventaTemp[id]}</div>`;
+    }).join('');
+    const d = parseFloat(document.getElementById('venta-desc').value) || 0;
+    document.getElementById('venta-total').textContent = `$${t - d}`;
+}
+
+function stockBadge(i) {
+    if(i.cantidad <= 0) return '<span class="stock-badge stock-out">Sin stock</span>';
+    if(i.cantidad <= i.stockMin) return `<span class="stock-badge stock-low">${i.cantidad} unidades</span>`;
+    return `<span class="stock-badge stock-ok">${i.cantidad} unidades</span>`;
+}
+
+function showView(v) {
+    document.querySelectorAll('.view').forEach(x => x.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(x => x.classList.remove('active'));
+    document.getElementById('view-'+v).classList.add('active');
+    event.currentTarget.classList.add('active');
+}
+
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+function toast(m) {
+    const t = document.getElementById('toast');
+    t.textContent = m; t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+function setStatus(s) {
+    const d = document.getElementById('sync-dot');
+    d.className = 'sync-dot ' + s;
+}
+
+function showLoading(m) { 
+    document.getElementById('loading-text').textContent = m;
+    document.getElementById('loading-overlay').classList.add('show'); 
+}
+function hideLoading() { document.getElementById('loading-overlay').classList.remove('show'); }
+
+function copiarLinkSincro() {
+    const link = `${window.location.origin}${window.location.pathname}?t=${getToken()}&g=${getGistId()}`;
+    navigator.clipboard.writeText(link);
+    toast("Link copiado al portapapeles");
+}
+
+// INICIO
 (async function init() {
-  // 1. ¿Viene configuración por URL?
-  const sincronizado = procesarParametrosURL();
-  if (sincronizado) toast('🔗 Configuración sincronizada!');
-
-  const token=getToken();
-  if (!token) return; 
-  
-  showLoading('Cargando tus datos...');
-  const ok=await cargarDesdeGist();
-  hideLoading();
-  if (ok) iniciarApp();
-  else {
-    document.getElementById('setup-screen').style.display='flex';
-    document.getElementById('setup-error').style.display='block';
-    document.getElementById('setup-error').textContent='⚠️ Falló la conexión.';
-  }
+    const params = new URLSearchParams(window.location.search);
+    if(params.get('t')) { setToken(params.get('t')); setGistId(params.get('g')); window.history.replaceState({},'',window.location.pathname); }
+    
+    if(getToken()) {
+        document.getElementById('setup-screen').style.display = 'none';
+        showLoading('Sincronizando...');
+        await cargar();
+        hideLoading();
+        document.getElementById('main-app').style.display = 'flex';
+        renderDashboard(); renderStock(); renderVentas();
+    }
 })();
 </script>
+
 </body>
 </html>
