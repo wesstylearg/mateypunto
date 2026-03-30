@@ -134,8 +134,8 @@ input:focus { border-color: var(--accent); }
             </div>
         </div>
         <div style="display:flex; gap:10px; margin-bottom:30px">
-            <button class="btn" onclick="openModal('modal-venta')">⚡ Nueva Venta</button>
-            <button class="btn sec" onclick="openModal('modal-gasto')">💸 Gasto Extra</button>
+            <button class="btn" onclick="openModal('modal-venta')">⚡ AGREGAR VENTA</button>
+            <button class="btn sec" onclick="openModal('modal-gasto')">💸 AGREGAR GASTO EXTRA</button>
         </div>
         <h3 style="font-family:var(--font-display); color:var(--accent); margin-bottom:15px">Alertas Críticas</h3>
         <div id="dashboard-alertas"></div>
@@ -143,8 +143,8 @@ input:focus { border-color: var(--accent); }
 
     <div class="view" id="view-stock">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:25px">
-            <h2 style="font-family:var(--font-display)">Inventario Real</h2>
-            <button class="btn" onclick="openModal('modal-item')">+ Agregar Producto</button>
+            <h2 style="font-family:var(--font-display)">STOCK ACTUAL</h2>
+            <button class="btn" onclick="openModal('modal-item')">+ AGREGAR PRODUCTO</button>
         </div>
         <div class="grid" id="stock-grid"></div>
     </div>
@@ -348,7 +348,7 @@ function renderDashboard() {
             <span>${i.nombre}</span>
             <span style="color:var(--red)">Quedan ${i.qty}</span>
         </div>
-    `).join('') || '<p>Todo ok ✅</p>');
+    `).join('') || '<p>JOYA PA ✅</p>');
 }
 
 function renderStock() {
