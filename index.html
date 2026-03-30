@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MATE Y PUNTO 🧉 — Gestión de Stock</title>
+<title>MATE & PUNTO 🧉 — Gestión de Stock</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -15,11 +15,10 @@
   --radius: 10px; --font-display: 'DM Serif Display', serif; --font-mono: 'DM Mono', monospace;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:var(--text);font-family:var(--font-mono);font-size:13px;min-height:100vh;line-height:1.6;overflow-x:hidden}
+body{background:var(--bg);color:var(--text);font-family:var(--font-mono);font-size:13px;min-height:100vh;line-height:1.6}
 .app{display:flex;flex-direction:column;min-height:100vh}
 header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--surface);position:sticky;top:0;z-index:100;gap:12px;flex-wrap:wrap}
 .logo{font-family:var(--font-display);font-size:22px;color:var(--amber);letter-spacing:-0.5px}
-.header-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .sync-status{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text3);padding:4px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:20px}
 .sync-dot{width:7px;height:7px;border-radius:50%;background:var(--text3)}
 .sync-dot.ok{background:var(--green-light)}.sync-dot.syncing{background:#d4a042;animation:pulse 1s infinite}.sync-dot.error{background:var(--red-light)}
@@ -36,12 +35,11 @@ main{flex:1;padding:20px;max-width:960px;margin:0 auto;width:100%}
 .stat-label{color:var(--text3);font-size:11px;text-transform:uppercase;margin-bottom:6px}
 .stat-value{font-family:var(--font-display);font-size:26px;color:var(--amber)}
 .section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px}
-.section-title{font-family:var(--font-display);font-size:18px}
 .btn{background:var(--amber-dim);border:1px solid var(--amber);color:var(--amber-light);padding:8px 16px;border-radius:7px;cursor:pointer;font-family:var(--font-mono);font-size:12px;transition:all 0.15s}
 .btn:hover{background:var(--amber);color:#0e0d0b}
 .btn.secondary{background:var(--surface2);border-color:var(--border2);color:var(--text2)}
 .btn.danger{background:var(--red);border-color:var(--red-light);color:#ffd0d0}
-.btn.sm{padding:5px 10px;font-size:11px}.btn:disabled{opacity:0.45}
+.btn.sm{padding:5px 10px;font-size:11px}
 .table-wrap{overflow-x:auto;border-radius:var(--radius);border:1px solid var(--border)}
 table{width:100%;border-collapse:collapse}
 th{padding:10px 14px;text-align:left;font-size:10px;text-transform:uppercase;color:var(--text3);background:var(--surface2)}
@@ -57,13 +55,14 @@ td{padding:10px 14px;border-top:1px solid var(--border);vertical-align:middle}
 .modal-overlay.open{display:flex}
 .modal{background:var(--surface);border:1px solid var(--border2);border-radius:14px;padding:24px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto}
 .form-group{margin-bottom:16px}
-input,select,textarea{width:100%;background:var(--surface2);border:1px solid var(--border2);color:var(--text);padding:10px;border-radius:7px;font-family:var(--font-mono);outline:none}
+input,select{width:100%;background:var(--surface2);border:1px solid var(--border2);color:var(--text);padding:10px;border-radius:7px;font-family:var(--font-mono);outline:none}
 .productos-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
 .producto-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;position:relative}
 .historial-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:10px}
 .historial-header{display:flex;justify-content:space-between;align-items:flex-start}
 .historial-items-list{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
 .historial-item-chip{background:var(--surface2);padding:2px 10px;border-radius:20px;font-size:11px;color:var(--text2);border:1px solid var(--border)}
+.btn-borrar-venta{background:#3a2020;border:1px solid #8b3a3a;color:#ff9494;padding:4px 8px;border-radius:5px;cursor:pointer;font-size:11px;margin-top:8px}
 #toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--surface3);border:1px solid var(--amber-dim);color:var(--amber-light);padding:12px 24px;border-radius:30px;z-index:9999;transition:0.3s}
 #toast.show{transform:translateX(-50%) translateY(0)}
 #loading-overlay{position:fixed;inset:0;background:var(--bg);display:none;align-items:center;justify-content:center;z-index:2000;flex-direction:column;gap:15px}
@@ -89,7 +88,7 @@ input,select,textarea{width:100%;background:var(--surface2);border:1px solid var
 <div class="app" id="main-app" style="display:none">
   <header>
     <div class="logo">🧉 Mate y Punto</div>
-    <div class="header-right">
+    <div class="header-right" style="display:flex;gap:10px;align-items:center">
       <div class="sync-status"><div class="sync-dot ok" id="sync-dot"></div><span id="sync-label">Sincronizado</span></div>
       <nav>
         <button class="nav-btn active" onclick="showView('dashboard')">Inicio</button>
@@ -103,15 +102,15 @@ input,select,textarea{width:100%;background:var(--surface2);border:1px solid var
   <main>
     <div class="view active" id="view-dashboard">
       <div class="section-header">
-        <div class="page-title">Panel</div>
+        <div class="page-title">Panel General</div>
         <button class="btn secondary sm" onclick="copiarLinkSincro()">🔗 Link Celular</button>
       </div>
       <div class="cards-grid">
-        <div class="stat-card"><div class="stat-label">Stock Total</div><div class="stat-value" id="stat-unidades">0</div></div>
+        <div class="stat-card"><div class="stat-label">Unidades Stock</div><div class="stat-value" id="stat-unidades">0</div></div>
         <div class="stat-card"><div class="stat-label">Ventas Hoy</div><div class="stat-value" id="stat-ventas-hoy">$0</div></div>
         <div class="stat-card"><div class="stat-label">Ganancia Hoy</div><div class="stat-value" style="color:var(--green-light)" id="stat-ganancia-hoy">$0</div></div>
       </div>
-      <div class="section-title">Avisos de Stock</div>
+      <div class="section-title">Alertas de Stock</div>
       <div id="alerta-stock" style="margin-top:10px"></div>
     </div>
 
@@ -125,8 +124,8 @@ input,select,textarea{width:100%;background:var(--surface2);border:1px solid var
 
     <div class="view" id="view-ventas">
       <div class="section-header">
-        <div class="page-title">Historial</div>
-        <button class="btn" onclick="openModalVenta()">+ Registrar Venta</button>
+        <div class="page-title">Historial de Ventas</div>
+        <button class="btn" onclick="openModalVenta()">+ Nueva Venta</button>
       </div>
       <div id="historial-ventas"></div>
     </div>
@@ -135,7 +134,7 @@ input,select,textarea{width:100%;background:var(--surface2);border:1px solid var
 
 <div class="modal-overlay" id="modal-item">
   <div class="modal">
-    <div class="section-title" id="modal-item-title">Producto</div><br>
+    <div class="page-title" style="font-size:20px" id="modal-item-title">Producto</div><br>
     <div class="form-group"><label>Nombre</label><input type="text" id="item-nombre"></div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
         <div class="form-group"><label>Costo</label><input type="number" id="item-costo"></div>
@@ -143,7 +142,7 @@ input,select,textarea{width:100%;background:var(--surface2);border:1px solid var
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
         <div class="form-group"><label>Stock Actual</label><input type="number" id="item-qty"></div>
-        <div class="form-group"><label>Stock Mínimo</label><input type="number" id="item-min" value="3"></div>
+        <div class="form-group"><label>Mínimo Alerta</label><input type="number" id="item-min" value="3"></div>
     </div>
     <div class="form-group"><label>Categoría</label>
         <select id="item-cat"><option value="mate">Mate</option><option value="termo">Termo</option><option value="otros">Otros</option></select>
@@ -157,24 +156,25 @@ input,select,textarea{width:100%;background:var(--surface2);border:1px solid var
 
 <div class="modal-overlay" id="modal-venta">
     <div class="modal">
-      <div class="section-title">Nueva Venta</div><br>
-      <div id="venta-selector" style="max-height:200px;overflow-y:auto;border:1px solid var(--border);padding:10px;border-radius:8px;margin-bottom:15px"></div>
+      <div class="page-title" style="font-size:20px">Nueva Venta</div><br>
+      <label>Seleccionar Productos:</label>
+      <div id="venta-selector" style="max-height:180px;overflow-y:auto;border:1px solid var(--border);padding:8px;border-radius:8px;margin-bottom:15px"></div>
       <div id="venta-lista-seleccionada" style="margin-bottom:15px"></div>
       <div class="form-group"><label>Descuento ($)</label><input type="number" id="venta-desc" value="0" oninput="recalcVenta()"></div>
       <div style="display:flex;justify-content:space-between;align-items:center;padding-top:15px;border-top:1px solid var(--border2)">
           <div class="stat-value" id="venta-total">$0</div>
-          <button class="btn" onclick="confirmarVenta()">Finalizar Venta</button>
+          <button class="btn" onclick="confirmarVenta()">Finalizar</button>
       </div>
     </div>
 </div>
 
-<div class="modal-overlay" id="modal-confirm">
-    <div class="modal" style="max-width:300px;text-align:center">
-        <div class="section-title">¿Confirmar?</div><br>
-        <p id="confirm-text" style="color:var(--text2);margin-bottom:20px"></p>
+<div class="modal-overlay" id="modal-confirmar">
+    <div class="modal" style="max-width:320px;text-align:center">
+        <div class="page-title" style="font-size:18px">¿Confirmar Acción?</div><br>
+        <p id="confirmar-msg" style="color:var(--text2);margin-bottom:20px"></p>
         <div style="display:flex;gap:10px;justify-content:center">
-            <button class="btn secondary" onclick="closeModal('modal-confirm')">No</button>
-            <button class="btn danger" id="confirm-btn-action">Sí, borrar</button>
+            <button class="btn secondary" onclick="closeModal('modal-confirmar')">No, volver</button>
+            <button class="btn danger" id="confirmar-btn">Sí, confirmar</button>
         </div>
     </div>
 </div>
@@ -182,21 +182,27 @@ input,select,textarea{width:100%;background:var(--surface2);border:1px solid var
 <div id="toast"></div>
 
 <script>
-// CONFIGURACIÓN Y PERSISTENCIA
+// =============================================
+// PERSISTENCIA Y SINCRONIZACIÓN
+// =============================================
 const LS_TOKEN = 'mp_token', LS_GIST = 'mp_gist';
+const fmt = n => '$' + parseFloat(n||0).toLocaleString('es-AR');
+const fmtFecha = ts => new Date(ts).toLocaleString('es-AR');
+
 let memDB = { items: [], ventas: [] };
 let ventaTemp = {};
+let editingId = null;
 
 const getToken = () => localStorage.getItem(LS_TOKEN);
 const getGistId = () => localStorage.getItem(LS_GIST);
 const setToken = t => localStorage.setItem(LS_TOKEN, t);
 const setGistId = id => localStorage.setItem(LS_GIST, id);
 
-// SINCRONIZACIÓN GITHUB
+// --- GITHUB API ---
 async function conectarGist() {
-    const t = document.getElementById('setup-token').value;
+    const t = document.getElementById('setup-token').value.trim();
     if(!t) return;
-    showLoading('Verificando...');
+    showLoading('Creando nube...');
     try {
         const res = await fetch('https://api.github.com/gists', {
             method: 'POST',
@@ -215,21 +221,21 @@ async function conectarGist() {
     }
 }
 
-async function sincronizar() {
+async function guardarEnNube() {
     const t = getToken(), g = getGistId();
     if(!t || !g) return;
     setStatus('syncing');
     try {
-        const res = await fetch(`https://api.github.com/gists/${g}`, {
+        await fetch(`https://api.github.com/gists/${g}`, {
             method: 'PATCH',
             headers: { Authorization: `Bearer ${t}` },
             body: JSON.stringify({ files: { 'mate.json': { content: JSON.stringify(memDB) } } })
         });
-        if(res.ok) setStatus('ok');
+        setStatus('ok');
     } catch(e) { setStatus('error'); }
 }
 
-async function cargar() {
+async function cargarDesdeNube() {
     const t = getToken(), g = getGistId();
     try {
         const res = await fetch(`https://api.github.com/gists/${g}`, { headers: { Authorization: `Bearer ${t}` } });
@@ -239,7 +245,16 @@ async function cargar() {
     } catch(e) { return false; }
 }
 
-// LOGICA DE NEGOCIO
+// =============================================
+// LÓGICA DE NEGOCIO
+// =============================================
+const DB = {
+    get items() { return memDB.items; },
+    set items(v) { memDB.items = v; guardarEnNube(); },
+    get ventas() { return memDB.ventas; },
+    set ventas(v) { memDB.ventas = v; guardarEnNube(); }
+};
+
 function guardarItem() {
     const id = editingId || Date.now().toString();
     const item = {
@@ -251,78 +266,112 @@ function guardarItem() {
         stockMin: parseInt(document.getElementById('item-min').value) || 3,
         categoria: document.getElementById('item-cat').value
     };
-    const idx = memDB.items.findIndex(i => i.id === id);
-    if(idx > -1) memDB.items[idx] = item; else memDB.items.push(item);
-    sincronizar(); closeModal('modal-item'); renderStock(); renderDashboard();
+    const items = [...DB.items];
+    const idx = items.findIndex(i => i.id === id);
+    if(idx > -1) items[idx] = item; else items.push(item);
+    DB.items = items;
+    closeModal('modal-item'); renderStock(); renderDashboard();
+    toast('Producto guardado');
 }
 
 function confirmarVenta() {
     const ids = Object.keys(ventaTemp);
     if(ids.length === 0) return;
     
-    let totalVenta = 0;
+    let subtotal = 0;
+    const items = [...DB.items];
     const itemsVenta = ids.map(id => {
-        const it = memDB.items.find(i => i.id === id);
+        const it = items.find(i => i.id === id);
         const cant = ventaTemp[id];
         it.cantidad -= cant;
-        totalVenta += (it.precioVenta * cant);
-        return { id, nombre: it.nombre, qty: cant, precio: it.precioVenta };
+        subtotal += (it.precioVenta * cant);
+        return { id, nombre: it.nombre, qty: cant, precioVenta: it.precioVenta };
     });
 
     const desc = parseFloat(document.getElementById('venta-desc').value) || 0;
-    memDB.ventas.push({
+    const ventas = [...DB.ventas];
+    ventas.push({
         id: Date.now().toString(),
         ts: Date.now(),
         items: itemsVenta,
-        total: totalVenta - desc,
+        total: subtotal - desc,
         descuento: desc
     });
 
-    sincronizar(); closeModal('modal-venta'); renderDashboard(); renderVentas(); renderStock();
-    toast("Venta registrada");
+    DB.items = items;
+    DB.ventas = ventas;
+    closeModal('modal-venta'); renderDashboard(); renderVentas(); renderStock();
+    toast("✅ Venta registrada");
 }
 
-// --- NUEVA FUNCIÓN: BORRAR VENTA Y REVERTIR STOCK ---
-function borrarVenta(idVenta) {
-    const vIdx = memDB.ventas.findIndex(v => v.id === idVenta);
+// --- BORRAR VENTA CON REVERSIÓN ---
+function pedirConfirmacionBorrarVenta(idVenta) {
+    const v = DB.ventas.find(x => x.id === idVenta);
+    document.getElementById('confirmar-msg').textContent = `¿Anular venta de ${fmt(v.total)}? El stock se devolverá al inventario.`;
+    document.getElementById('confirmar-btn').onclick = () => {
+        ejecutarBorradoVenta(idVenta);
+        closeModal('modal-confirmar');
+    };
+    openModal('modal-confirmar');
+}
+
+function ejecutarBorradoVenta(idVenta) {
+    const ventas = [...DB.ventas];
+    const vIdx = ventas.findIndex(v => v.id === idVenta);
     if (vIdx === -1) return;
 
-    const venta = memDB.ventas[vIdx];
+    const venta = ventas[vIdx];
+    const items = [...DB.items];
     
-    // REVERSIÓN DE STOCK: Devolvemos cada item al inventario
-    venta.items.forEach(vItem => {
-        const it = memDB.items.find(i => i.id === vItem.id);
-        if (it) it.cantidad += vItem.qty;
+    // Devolver stock
+    venta.items.forEach(vi => {
+        const it = items.find(i => i.id === vi.id);
+        if (it) it.cantidad += vi.qty;
     });
 
-    // Eliminamos la venta del array
-    memDB.ventas.splice(vIdx, 1);
+    ventas.splice(vIdx, 1);
+    DB.items = items;
+    DB.ventas = ventas;
 
-    sincronizar();
-    renderVentas();
-    renderDashboard();
-    renderStock();
-    toast("Venta eliminada y stock devuelto");
+    renderVentas(); renderDashboard(); renderStock();
+    toast("🗑 Venta eliminada y stock devuelto");
 }
 
-function pedirConfirmacionBorrarVenta(id) {
-    const v = memDB.ventas.find(x => x.id === id);
-    document.getElementById('confirm-text').textContent = `¿Anular venta de $${v.total}? El stock se devolverá automáticamente.`;
-    document.getElementById('confirm-btn-action').onclick = () => {
-        borrarVenta(id);
-        closeModal('modal-confirm');
-    };
-    openModal('modal-confirm');
-}
-
+// =============================================
 // RENDERERS
+// =============================================
+function renderDashboard() {
+    const hoy = new Date().toDateString();
+    const vHoy = DB.ventas.filter(v => new Date(v.ts).toDateString() === hoy);
+    
+    const ingresos = vHoy.reduce((a,b) => a + b.total, 0);
+    const costo = vHoy.reduce((acc, v) => {
+        return acc + v.items.reduce((acc2, vi) => {
+            const it = DB.items.find(i => i.id === vi.id);
+            return acc2 + ((it ? it.precioCosto : 0) * vi.qty);
+        }, 0);
+    }, 0);
+
+    document.getElementById('stat-unidades').textContent = DB.items.reduce((a,b) => a + (b.cantidad||0), 0);
+    document.getElementById('stat-ventas-hoy').textContent = fmt(ingresos);
+    document.getElementById('stat-ganancia-hoy').textContent = fmt(ingresos - costo);
+    
+    const alertas = DB.items.filter(i => i.cantidad <= i.stockMin);
+    document.getElementById('alerta-stock').innerHTML = alertas.length ? alertas.map(i => `
+        <div style="background:var(--surface2);padding:10px;border-radius:8px;margin-bottom:5px;display:flex;justify-content:space-between">
+            <span>${i.nombre}</span>
+            <span style="color:var(--red-light)">Stock: ${i.cantidad}</span>
+        </div>
+    `).join('') : '<p style="color:var(--text3)">Stock OK</p>';
+}
+
 function renderStock() {
     const grid = document.getElementById('stock-grid');
-    grid.innerHTML = memDB.items.map(i => `
+    grid.innerHTML = DB.items.map(i => `
         <div class="producto-card">
             <div class="category-badge cat-${i.categoria}">${i.categoria}</div>
             <div style="font-weight:bold;margin:10px 0">${i.nombre}</div>
-            <div style="font-size:16px;color:var(--amber)">$${i.precioVenta}</div>
+            <div style="font-size:16px;color:var(--amber)">${fmt(i.precioVenta)}</div>
             <div style="margin:10px 0">${stockBadge(i)}</div>
             <button class="btn secondary sm" style="width:100%" onclick="editarItem('${i.id}')">Editar</button>
         </div>
@@ -331,66 +380,75 @@ function renderStock() {
 
 function renderVentas() {
     const hist = document.getElementById('historial-ventas');
-    hist.innerHTML = memDB.ventas.slice().reverse().map(v => `
+    const ventas = [...DB.ventas].reverse();
+    hist.innerHTML = ventas.map(v => {
+        // Cálculo ganancia real por venta
+        const costoVenta = v.items.reduce((acc, vi) => {
+            const it = DB.items.find(i => i.id === vi.id);
+            return acc + ((it ? it.precioCosto : 0) * vi.qty);
+        }, 0);
+        const gananciaReal = v.total - costoVenta;
+
+        return `
         <div class="historial-card">
             <div class="historial-header">
                 <div>
-                    <div style="color:var(--text3);font-size:11px">${new Date(v.ts).toLocaleString()}</div>
-                    <div class="stat-value" style="font-size:18px">$${v.total}</div>
+                    <div style="color:var(--text3);font-size:11px">${fmtFecha(v.ts)}</div>
+                    <div class="stat-value" style="font-size:18px">${fmt(v.total)}</div>
+                    <div style="color:var(--green-light);font-size:11px">Ganancia: ${fmt(gananciaReal)}</div>
                 </div>
-                <button class="btn danger sm" onclick="pedirConfirmacionBorrarVenta('${v.id}')">🗑 Borrar</button>
+                <button class="btn-borrar-venta" onclick="pedirConfirmacionBorrarVenta('${v.id}')">🗑 Borrar</button>
             </div>
             <div class="historial-items-list">
                 ${v.items.map(i => `<span class="historial-item-chip">${i.nombre} x${i.qty}</span>`).join('')}
             </div>
-        </div>
-    `).join('');
+        </div>`;
+    }).join('');
 }
 
-function renderDashboard() {
-    const hoy = new Date().toDateString();
-    const vHoy = memDB.ventas.filter(v => new Date(v.ts).toDateString() === hoy);
-    const ingresos = vHoy.reduce((a,b) => a + b.total, 0);
-    
-    document.getElementById('stat-unidades').textContent = memDB.items.reduce((a,b) => a + b.cantidad, 0);
-    document.getElementById('stat-ventas-hoy').textContent = `$${ingresos}`;
-    
-    // Alertas
-    const alertas = memDB.items.filter(i => i.cantidad <= i.stockMin);
-    document.getElementById('alerta-stock').innerHTML = alertas.map(i => `
-        <div style="background:var(--surface2);padding:10px;border-radius:8px;margin-bottom:5px;display:flex;justify-content:space-between">
-            <span>${i.nombre}</span>
-            <span style="color:var(--red-light)">Quedan ${i.cantidad}</span>
-        </div>
-    `).join('') || '<p style="color:var(--text3)">Todo en orden</p>';
+// =============================================
+// INTERFAZ Y MODALES
+// =============================================
+function showView(v) {
+    document.querySelectorAll('.view').forEach(x => x.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(x => x.classList.remove('active'));
+    document.getElementById('view-'+v).classList.add('active');
+    event.currentTarget.classList.add('active');
+    if(v === 'dashboard') renderDashboard();
+    if(v === 'stock') renderStock();
+    if(v === 'ventas') renderVentas();
 }
 
-// UI HELPERS
-let editingId = null;
-function openModalItem() { editingId = null; openModal('modal-item'); }
 function editarItem(id) { 
     editingId = id; 
-    const i = memDB.items.find(x => x.id === id);
+    const i = DB.items.find(x => x.id === id);
     document.getElementById('item-nombre').value = i.nombre;
     document.getElementById('item-costo').value = i.precioCosto;
     document.getElementById('item-venta').value = i.precioVenta;
     document.getElementById('item-qty').value = i.cantidad;
+    document.getElementById('item-min').value = i.stockMin;
+    document.getElementById('item-cat').value = i.categoria;
     openModal('modal-item');
 }
+
+function openModalItem() { editingId = null; openModal('modal-item'); }
 
 function openModalVenta() {
     ventaTemp = {};
     const sel = document.getElementById('venta-selector');
-    sel.innerHTML = memDB.items.filter(i => i.cantidad > 0).map(i => `
-        <div onclick="addTemp('${i.id}')" style="padding:8px;border-bottom:1px solid var(--border);cursor:pointer">
-            ${i.nombre} ($${i.precioVenta})
+    sel.innerHTML = DB.items.filter(i => i.cantidad > 0).map(i => `
+        <div onclick="addVentaTemp('${i.id}')" style="padding:10px;border-bottom:1px solid var(--border);cursor:pointer; display:flex; justify-content:space-between">
+            <span>${i.nombre}</span>
+            <span style="color:var(--amber)">${fmt(i.precioVenta)}</span>
         </div>
     `).join('');
     recalcVenta();
     openModal('modal-venta');
 }
 
-function addTemp(id) {
+function addVentaTemp(id) {
+    const it = DB.items.find(i => i.id === id);
+    if(ventaTemp[id] >= it.cantidad) return toast("No hay más stock");
     ventaTemp[id] = (ventaTemp[id] || 0) + 1;
     recalcVenta();
 }
@@ -399,25 +457,18 @@ function recalcVenta() {
     let t = 0;
     const lista = document.getElementById('venta-lista-seleccionada');
     lista.innerHTML = Object.keys(ventaTemp).map(id => {
-        const i = memDB.items.find(x => x.id === id);
+        const i = DB.items.find(x => x.id === id);
         t += (i.precioVenta * ventaTemp[id]);
-        return `<div style="font-size:11px">${i.nombre} x${ventaTemp[id]}</div>`;
+        return `<div style="font-size:12px; margin-bottom:4px">📦 ${i.nombre} x${ventaTemp[id]}</div>`;
     }).join('');
     const d = parseFloat(document.getElementById('venta-desc').value) || 0;
-    document.getElementById('venta-total').textContent = `$${t - d}`;
+    document.getElementById('venta-total').textContent = fmt(t - d);
 }
 
 function stockBadge(i) {
-    if(i.cantidad <= 0) return '<span class="stock-badge stock-out">Sin stock</span>';
-    if(i.cantidad <= i.stockMin) return `<span class="stock-badge stock-low">${i.cantidad} unidades</span>`;
-    return `<span class="stock-badge stock-ok">${i.cantidad} unidades</span>`;
-}
-
-function showView(v) {
-    document.querySelectorAll('.view').forEach(x => x.classList.remove('active'));
-    document.querySelectorAll('.nav-btn').forEach(x => x.classList.remove('active'));
-    document.getElementById('view-'+v).classList.add('active');
-    event.currentTarget.classList.add('active');
+    if(i.cantidad <= 0) return '<span class="stock-badge stock-out">Agotado</span>';
+    if(i.cantidad <= i.stockMin) return `<span class="stock-badge stock-low">${i.cantidad} unid.</span>`;
+    return `<span class="stock-badge stock-ok">${i.cantidad} unid.</span>`;
 }
 
 function openModal(id) { document.getElementById(id).classList.add('open'); }
@@ -429,38 +480,45 @@ function toast(m) {
     setTimeout(() => t.classList.remove('show'), 2000);
 }
 
-function setStatus(s) {
-    const d = document.getElementById('sync-dot');
-    d.className = 'sync-dot ' + s;
-}
-
-function showLoading(m) { 
-    document.getElementById('loading-text').textContent = m;
-    document.getElementById('loading-overlay').classList.add('show'); 
-}
+function setStatus(s) { document.getElementById('sync-dot').className = 'sync-dot ' + s; }
+function showLoading(m) { document.getElementById('loading-text').textContent = m; document.getElementById('loading-overlay').classList.add('show'); }
 function hideLoading() { document.getElementById('loading-overlay').classList.remove('show'); }
 
 function copiarLinkSincro() {
     const link = `${window.location.origin}${window.location.pathname}?t=${getToken()}&g=${getGistId()}`;
     navigator.clipboard.writeText(link);
-    toast("Link copiado al portapapeles");
+    toast("Link copiado. Envíalo a tu celular.");
 }
 
-// INICIO
+function abrirConfig() {
+    const nt = prompt("Actualizar Token GitHub (ghp_...):", getToken());
+    if(nt) { setToken(nt); toast("Token actualizado localmente."); }
+}
+
+// =============================================
+// INIT
+// =============================================
 (async function init() {
     const params = new URLSearchParams(window.location.search);
-    if(params.get('t')) { setToken(params.get('t')); setGistId(params.get('g')); window.history.replaceState({},'',window.location.pathname); }
+    if(params.get('t')) { 
+        setToken(params.get('t')); 
+        setGistId(params.get('g')); 
+        window.history.replaceState({},'',window.location.pathname); 
+    }
     
-    if(getToken()) {
+    if(getToken() && getGistId()) {
         document.getElementById('setup-screen').style.display = 'none';
         showLoading('Sincronizando...');
-        await cargar();
+        const ok = await cargarDesdeNube();
         hideLoading();
-        document.getElementById('main-app').style.display = 'flex';
-        renderDashboard(); renderStock(); renderVentas();
+        if(ok) {
+            document.getElementById('main-app').style.display = 'flex';
+            renderDashboard(); renderStock(); renderVentas();
+        } else {
+            document.getElementById('setup-screen').style.display = 'flex';
+        }
     }
 })();
 </script>
-
 </body>
 </html>
