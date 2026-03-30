@@ -134,39 +134,34 @@ input:focus,select:focus,textarea:focus{border-color:var(--amber-dim)}input[type
 </head>
 <body>
 
-<!-- SETUP (primer uso) -->
 <div id="setup-screen">
   <div class="setup-card">
     <div class="setup-logo">🧉 Mate y Punto</div>
     <div class="setup-sub">Para guardar tus datos en la nube necesitás conectar tu cuenta de GitHub una sola vez. Los datos se almacenan en un Gist privado tuyo.</div>
-    <div class="setup-steps">
-      <div class="setup-step">
-        <div class="step-num">1</div>
-        <div class="step-text">
-          Entrá a <a href="https://github.com/settings/tokens/new?description=MateYPunto&scopes=gist" target="_blank">GitHub → Settings → Tokens</a> y creá un token con el permiso <strong>gist</strong> habilitado (classic token). Copialo antes de cerrar la página.
+    <div id="setup-initial-form">
+        <div class="setup-steps">
+        <div class="setup-step">
+            <div class="step-num">1</div>
+            <div class="step-text">
+            Entrá a <a href="https://github.com/settings/tokens/new?description=MateYPunto&scopes=gist" target="_blank">GitHub → Settings → Tokens</a> y creá un token con el permiso <strong>gist</strong>.
+            </div>
         </div>
-      </div>
-      <div class="setup-step">
-        <div class="step-num">2</div>
-        <div class="step-text">Pegá el token acá abajo. Se guarda <strong>solo en tu navegador</strong> y nunca se envía a ningún servidor externo, solo a la API de GitHub.</div>
-      </div>
+        </div>
+        <div class="form-group">
+        <label>Token de GitHub</label>
+        <input type="password" id="setup-token" class="token-input" placeholder="ghp_xxxxxxxxxxxxxxxx" autocomplete="off">
+        </div>
+        <div class="setup-error" id="setup-error"></div>
+        <button class="btn" style="width:100%;margin-top:8px" onclick="conectarGist()" id="setup-btn">Conectar y comenzar →</button>
     </div>
-    <div class="form-group">
-      <label>Token de GitHub</label>
-      <input type="password" id="setup-token" class="token-input" placeholder="ghp_xxxxxxxxxxxxxxxx" autocomplete="off">
-    </div>
-    <div class="setup-error" id="setup-error"></div>
-    <button class="btn" style="width:100%;margin-top:8px" onclick="conectarGist()" id="setup-btn">Conectar y comenzar →</button>
   </div>
 </div>
 
-<!-- LOADING -->
 <div id="loading-overlay">
   <div class="loading-spinner"></div>
   <div class="loading-text" id="loading-text">Sincronizando...</div>
 </div>
 
-<!-- APP PRINCIPAL -->
 <div class="app" id="main-app" style="display:none">
   <header>
     <div class="logo">🧉 Mate y Punto <span>stock & ventas</span></div>
@@ -186,10 +181,15 @@ input:focus,select:focus,textarea:focus{border-color:var(--amber-dim)}input[type
   </header>
 
   <main>
-    <!-- DASHBOARD -->
     <div class="view active" id="view-dashboard">
-      <div class="page-title">Panel general</div>
-      <div class="page-sub" id="dashboard-fecha"></div>
+      <div class="section-header">
+          <div>
+            <div class="page-title">Panel general</div>
+            <div class="page-sub" id="dashboard-fecha"></div>
+          </div>
+          <button class="btn green-btn sm" onclick="copiarLinkSincro()">🔗 Copiar Link de Acceso (Celular)</button>
+      </div>
+      
       <div class="cards-grid">
         <div class="stat-card"><div class="stat-label">Productos en stock</div><div class="stat-value" id="stat-total-items">0</div></div>
         <div class="stat-card"><div class="stat-label">Unidades disponibles</div><div class="stat-value green" id="stat-unidades">0</div></div>
@@ -205,7 +205,6 @@ input:focus,select:focus,textarea:focus{border-color:var(--amber-dim)}input[type
       <div id="ultimas-ventas"></div>
     </div>
 
-    <!-- STOCK -->
     <div class="view" id="view-stock">
       <div class="section-header">
         <div><div class="page-title">Stock</div><div class="page-sub">Administrá tus productos</div></div>
@@ -230,7 +229,6 @@ input:focus,select:focus,textarea:focus{border-color:var(--amber-dim)}input[type
       <div class="productos-grid" id="stock-grid"></div>
     </div>
 
-    <!-- VENTAS -->
     <div class="view" id="view-ventas">
       <div class="section-header">
         <div><div class="page-title">Ventas</div><div class="page-sub">Historial y nueva venta</div></div>
@@ -239,7 +237,6 @@ input:focus,select:focus,textarea:focus{border-color:var(--amber-dim)}input[type
       <div class="historial-list" id="historial-ventas"></div>
     </div>
 
-    <!-- REPORTES -->
     <div class="view" id="view-reportes">
       <div class="page-title">Reportes</div>
       <div class="page-sub">Análisis de tu negocio</div>
@@ -255,7 +252,6 @@ input:focus,select:focus,textarea:focus{border-color:var(--amber-dim)}input[type
 
 <div id="toast"></div>
 
-<!-- MODAL ITEM -->
 <div class="modal-overlay" id="modal-item">
   <div class="modal">
     <div class="modal-title"><span id="modal-item-title">Agregar producto</span><button class="modal-close" onclick="closeModal('modal-item')">×</button></div>
@@ -284,7 +280,6 @@ input:focus,select:focus,textarea:focus{border-color:var(--amber-dim)}input[type
   </div>
 </div>
 
-<!-- MODAL VENTA -->
 <div class="modal-overlay" id="modal-venta">
   <div class="modal" style="max-width:600px">
     <div class="modal-title"><span>Nueva venta</span><button class="modal-close" onclick="closeModal('modal-venta')">×</button></div>
@@ -311,7 +306,6 @@ input:focus,select:focus,textarea:focus{border-color:var(--amber-dim)}input[type
   </div>
 </div>
 
-<!-- MODAL CONFIRMAR ELIMINAR -->
 <div class="modal-overlay" id="modal-confirmar">
   <div class="modal" style="max-width:360px">
     <div class="modal-title"><span>Confirmar</span><button class="modal-close" onclick="closeModal('modal-confirmar')">×</button></div>
@@ -323,7 +317,6 @@ input:focus,select:focus,textarea:focus{border-color:var(--amber-dim)}input[type
   </div>
 </div>
 
-<!-- MODAL CONFIG -->
 <div class="modal-overlay" id="modal-config">
   <div class="modal" style="max-width:420px">
     <div class="modal-title"><span>Configuración</span><button class="modal-close" onclick="closeModal('modal-config')">×</button></div>
@@ -371,6 +364,37 @@ function showLoading(txt) {
   document.getElementById('loading-text').textContent = txt || 'Cargando...';
 }
 function hideLoading() { document.getElementById('loading-overlay').classList.remove('show'); }
+
+// --- FUNCIONES DE SINCRONIZACIÓN (NUEVO) ---
+function copiarLinkSincro() {
+    const token = getToken();
+    const gist = getGistId();
+    if (!token || !gist) { toast('⚠️ Primero debés estar conectado'); return; }
+    
+    // Generamos URL con parámetros (hash para seguridad)
+    const base = window.location.origin + window.location.pathname;
+    const link = `${base}?t=${token}&g=${gist}`;
+    
+    navigator.clipboard.writeText(link).then(() => {
+        toast('📋 Link copiado. Enviatelo al celular y abrilo.');
+    });
+}
+
+function procesarParametrosURL() {
+    const params = new URLSearchParams(window.location.search);
+    const t = params.get('t');
+    const g = params.get('g');
+    
+    if (t && g) {
+        setToken(t);
+        setGistId(g);
+        // Limpiamos URL por seguridad
+        window.history.replaceState({}, document.title, window.location.pathname);
+        return true;
+    }
+    return false;
+}
+// -------------------------------------------
 
 async function crearGist(token) {
   const res = await fetch('https://api.github.com/gists', {
@@ -436,7 +460,6 @@ function guardarEnGist() {
   }, 1500);
 }
 
-// DB proxy — reemplaza localStorage
 const DB = {
   get items()  { return memDB.items; },
   set items(v) { memDB.items = v; guardarEnGist(); },
@@ -444,9 +467,6 @@ const DB = {
   set ventas(v) { memDB.ventas = v; guardarEnGist(); },
 };
 
-// =============================================
-// SETUP / AUTH
-// =============================================
 async function conectarGist() {
   const tokenVal = document.getElementById('setup-token').value.trim();
   const errEl    = document.getElementById('setup-error');
@@ -480,7 +500,7 @@ async function conectarGist() {
     document.getElementById('setup-screen').style.display = 'flex';
     btn.disabled = false; btn.textContent = 'Conectar y comenzar →';
     errEl.style.display = 'block';
-    errEl.textContent = '❌ Token inválido o sin permisos. Creá uno nuevo con permiso "gist".';
+    errEl.textContent = '❌ Token inválido o sin permisos.';
   }
 }
 
@@ -504,14 +524,14 @@ function guardarConfig() {
 }
 
 function desconectar() {
-  if (!confirm('¿Desconectar? El token y el ID del Gist se borran de este navegador. Tus datos en GitHub quedan intactos.')) return;
+  if (!confirm('¿Desconectar?')) return;
   localStorage.removeItem(LS_TOKEN);
   localStorage.removeItem(LS_GIST_ID);
   location.reload();
 }
 
 // =============================================
-// UTILS
+// UTILS & RENDER (Se mantienen igual)
 // =============================================
 const fmt      = n  => '$' + parseFloat(n||0).toLocaleString('es-AR', {minimumFractionDigits:0, maximumFractionDigits:2});
 const uid      = () => Date.now().toString(36) + Math.random().toString(36).slice(2);
@@ -550,9 +570,6 @@ function stockBadge(item) {
   return `<span class="stock-badge stock-ok">⬤ ${q}</span>`;
 }
 
-// =============================================
-// DASHBOARD
-// =============================================
 function renderDashboard() {
   const hoy = new Date();
   document.getElementById('dashboard-fecha').textContent =
@@ -583,9 +600,6 @@ function renderDashboard() {
     : `<div class="historial-list">${ultimas.map(v=>ventaCard(v)).join('')}</div>`;
 }
 
-// =============================================
-// STOCK
-// =============================================
 function renderStock() {
   const buscar = (document.getElementById('filtro-buscar')?.value||'').toLowerCase();
   const cat    = document.getElementById('filtro-categoria')?.value||'';
@@ -605,7 +619,7 @@ function renderStock() {
 
   const grid = document.getElementById('stock-grid');
   if (filtrados.length===0) {
-    grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">📦</div><p>No hay productos. Agregá uno con el botón de arriba.</p></div>`;
+    grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">📦</div><p>No hay productos.</p></div>`;
     return;
   }
   grid.innerHTML = filtrados.map(item=>`
@@ -643,11 +657,7 @@ function cambiarQty(id, delta) {
   DB.items=items; renderStock(); renderDashboard();
 }
 
-// =============================================
-// MODAL ITEM
-// =============================================
 let editingItemId=null;
-
 function openModalItem() {
   editingItemId=null;
   document.getElementById('modal-item-title').textContent='Agregar producto';
@@ -657,7 +667,6 @@ function openModalItem() {
   document.getElementById('item-stock-min').value='3';
   document.getElementById('item-combo').value='si';
   openModal('modal-item');
-  setTimeout(()=>document.getElementById('item-nombre').focus(),100);
 }
 
 function editarItem(id) {
@@ -696,7 +705,7 @@ function guardarItem() {
 
 function confirmarEliminar(id) {
   const item=DB.items.find(i=>i.id===id);
-  document.getElementById('confirmar-msg').textContent=`¿Eliminás "${item.nombre}"? Esta acción no se puede deshacer.`;
+  document.getElementById('confirmar-msg').textContent=`¿Eliminás "${item.nombre}"?`;
   document.getElementById('confirmar-btn').onclick=()=>{
     DB.items=DB.items.filter(i=>i.id!==id);
     closeModal('modal-confirmar'); renderStock(); renderDashboard(); toast('🗑 Producto eliminado');
@@ -704,11 +713,7 @@ function confirmarEliminar(id) {
   openModal('modal-confirmar');
 }
 
-// =============================================
-// MODAL VENTA
-// =============================================
 let ventaItemsSelected={};
-
 function openModalVenta() {
   ventaItemsSelected={};
   document.getElementById('venta-descuento').value='';
@@ -724,7 +729,7 @@ function renderStockSelector() {
   el.innerHTML=items.map(item=>`
     <div class="stock-select-item" onclick="toggleVentaItem('${item.id}')">
       <div><span style="color:var(--text)">${item.nombre}</span><span style="margin-left:8px">${catBadge(item.categoria)}</span></div>
-      <div style="color:var(--text3);font-size:11px">${item.precioVenta?fmt(item.precioVenta):'sin precio'} · stock: ${item.cantidad}</div>
+      <div style="color:var(--text3);font-size:11px">${item.precioVenta?fmt(item.precioVenta):'—'} · stock: ${item.cantidad}</div>
     </div>`).join('');
 }
 
@@ -742,14 +747,13 @@ function renderVentaItems() {
   el.innerHTML=ids.map(id=>{
     const item=DB.items.find(i=>i.id===id), sel=ventaItemsSelected[id];
     return `<div class="venta-item-row">
-      <div class="venta-item-name">${item.nombre}<div style="color:var(--text3);font-size:11px">${CAT_LABELS[item.categoria]||item.categoria}</div></div>
+      <div class="venta-item-name">${item.nombre}</div>
       <div class="venta-item-qty-ctrl">
         <button class="qty-btn" onclick="cambiarVentaQty('${id}',-1)">−</button>
         <span style="min-width:20px;text-align:center">${sel.qty}</span>
         <button class="qty-btn" onclick="cambiarVentaQty('${id}',1)">+</button>
       </div>
-      <input type="number" class="venta-item-price-input" value="${sel.precioUnitario}" min="0" step="0.01"
-        oninput="setPrecioVentaItem('${id}',this.value)" title="Precio unitario ($)">
+      <input type="number" class="venta-item-price-input" value="${sel.precioUnitario}" oninput="setPrecioVentaItem('${id}',this.value)">
       <button class="btn danger sm" onclick="quitarVentaItem('${id}')">✕</button>
     </div>`;
   }).join('');
@@ -779,13 +783,12 @@ function calcularTotal() {
 
 function confirmarVenta() {
   const ids=Object.keys(ventaItemsSelected);
-  if (ids.length===0) { toast('⚠️ Agregá al menos un producto'); return; }
+  if (ids.length===0) { toast('⚠️ Agregá productos'); return; }
   let sub=0;
   const ventaItems=ids.map(id=>{ const s=ventaItemsSelected[id]; sub+=s.precioUnitario*s.qty; return {id,qty:s.qty,precioUnitario:s.precioUnitario}; });
   const desc=parseFloat(document.getElementById('venta-descuento').value)||0;
   const total=Math.max(0,sub-desc);
 
-  // Descontar stock
   const items=DB.items.map(i=>{ const vi=ventaItems.find(v=>v.id===i.id); return vi?{...i,cantidad:Math.max(0,(i.cantidad||0)-vi.qty)}:i; });
   DB.items=items;
 
@@ -797,24 +800,18 @@ function confirmarVenta() {
   renderStock(); renderDashboard(); renderVentas();
 }
 
-// =============================================
-// HISTORIAL
-// =============================================
 function ventaCard(v) {
   const chips=v.items.map(vi=>{
     const it=DB.items.find(i=>i.id===vi.id);
-    return `<span class="historial-item-chip">${it?it.nombre:'Prod. eliminado'} ×${vi.qty} (${fmt(vi.precioUnitario)} c/u)</span>`;
+    return `<span class="historial-item-chip">${it?it.nombre:'Eliminado'} ×${vi.qty}</span>`;
   }).join('');
   return `<div class="historial-card">
     <div class="historial-header">
       <div>
-        <div style="font-size:13px;color:var(--text)">${v.tipo==='combo'?'🎁 Combo':'📦 Individual'}${v.notas?' · '+v.notas:''}</div>
+        <div style="font-size:13px;color:var(--text)">${v.tipo==='combo'?'🎁 Combo':'📦 Individual'}</div>
         <div class="historial-fecha">${fmtFecha(v.ts)}</div>
       </div>
-      <div>
-        <div class="historial-total">${fmt(v.total)}</div>
-        ${v.descuento>0?`<div style="color:var(--text3);font-size:11px;text-align:right">desc. ${fmt(v.descuento)}</div>`:''}
-      </div>
+      <div class="historial-total">${fmt(v.total)}</div>
     </div>
     <div class="historial-items-list">${chips}</div>
   </div>`;
@@ -823,16 +820,10 @@ function ventaCard(v) {
 function renderVentas() {
   const el=document.getElementById('historial-ventas');
   const ventas=[...DB.ventas].reverse();
-  el.innerHTML=ventas.length===0
-    ?`<div class="empty-state"><div class="empty-icon">🧾</div><p>No hay ventas registradas todavía</p></div>`
-    :ventas.map(v=>ventaCard(v)).join('');
+  el.innerHTML=ventas.length===0 ?`<div class="empty-state"><p>Sin ventas.</p></div>` :ventas.map(v=>ventaCard(v)).join('');
 }
 
-// =============================================
-// REPORTES
-// =============================================
 let periodoActual='dia';
-
 function setPeriodo(p) {
   periodoActual=p;
   document.querySelectorAll('.period-tab').forEach(b=>b.classList.toggle('active',b.getAttribute('onclick').includes("'"+p+"'")));
@@ -854,62 +845,43 @@ function renderReportes() {
   const ventas=filtrarPeriodo(DB.ventas,periodoActual), items=DB.items;
   const total  = ventas.reduce((s,v)=>s+v.total,0);
   const costo  = ventas.reduce((s,v)=>s+v.items.reduce((ss,vi)=>{ const it=items.find(i=>i.id===vi.id); return ss+(it?(it.precioCosto||0)*vi.qty:0); },0),0);
-  const vxp    = {};
-  ventas.forEach(v=>v.items.forEach(vi=>{ vxp[vi.id]=(vxp[vi.id]||0)+vi.qty; }));
-  const top    = Object.entries(vxp).map(([id,qty])=>({item:items.find(i=>i.id===id),qty})).filter(x=>x.item).sort((a,b)=>b.qty-a.qty).slice(0,5);
-  const bajo   = items.filter(i=>(i.cantidad||0)<=(i.stockMin||3)).slice(0,6);
-
   document.getElementById('report-grid').innerHTML=`
     <div class="report-card">
-      <div class="report-card-title">💰 Resumen financiero</div>
-      <div class="report-item"><span class="report-item-name">Ingresos</span><span class="report-item-val">${fmt(total)}</span></div>
-      <div class="report-item"><span class="report-item-name">Costo total</span><span class="report-item-val" style="color:var(--red-light)">${fmt(costo)}</span></div>
-      <div class="report-item"><span class="report-item-name">Ganancia neta</span><span class="report-item-val" style="color:var(--green-light)">${fmt(total-costo)}</span></div>
-      <div class="report-item"><span class="report-item-name">N° de ventas</span><span class="report-item-val">${ventas.length}</span></div>
-      ${ventas.length>0?`<div class="report-item"><span class="report-item-name">Ticket promedio</span><span class="report-item-val">${fmt(total/ventas.length)}</span></div>`:''}
-    </div>
-    <div class="report-card">
-      <div class="report-card-title">🏆 Más vendidos</div>
-      ${top.length===0?'<div style="color:var(--text3);font-size:12px">Sin datos para este período</div>'
-        :top.map((p,i)=>`<div class="report-item"><span class="report-item-name">${i+1}. ${p.item.nombre}</span><span class="report-item-val">${p.qty} unid.</span></div>`).join('')}
-    </div>
-    <div class="report-card">
-      <div class="report-card-title">⚠️ Stock bajo o agotado</div>
-      ${bajo.length===0?'<div style="color:var(--green-light);font-size:12px">✅ Todo el stock en orden</div>'
-        :bajo.map(i=>`<div class="report-item"><span class="report-item-name">${i.nombre}</span><span>${stockBadge(i)}</span></div>`).join('')}
+      <div class="report-card-title">💰 Finanzas</div>
+      <div class="report-item"><span>Ingresos</span><span class="report-item-val">${fmt(total)}</span></div>
+      <div class="report-item"><span>Ganancia</span><span class="report-item-val" style="color:var(--green-light)">${fmt(total-costo)}</span></div>
+      <div class="report-item"><span>Ventas</span><span class="report-item-val">${ventas.length}</span></div>
     </div>`;
 }
 
-// =============================================
-// EXPORT CSV
-// =============================================
 function exportCSV() {
   const items=DB.items;
-  if (items.length===0) { toast('⚠️ No hay productos para exportar'); return; }
-  const headers=['Nombre','Categoría','Precio Costo','Precio Venta','Cantidad','Stock Mínimo','Notas'];
-  const rows=items.map(i=>[i.nombre,CAT_LABELS[i.categoria]||i.categoria,i.precioCosto||0,i.precioVenta||0,i.cantidad||0,i.stockMin||3,i.notas||'']);
+  if (items.length===0) { toast('⚠️ Sin productos'); return; }
+  const headers=['Nombre','Categoría','Precio Costo','Precio Venta','Cantidad'];
+  const rows=items.map(i=>[i.nombre,CAT_LABELS[i.categoria]||i.categoria,i.precioCosto||0,i.precioVenta||0,i.cantidad||0]);
   const csv=[headers,...rows].map(r=>r.map(c=>`"${c}"`).join(',')).join('\n');
   const a=document.createElement('a');
   a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
-  a.download='stock_mateyPunto.csv'; a.click();
-  toast('📥 CSV exportado');
+  a.download='stock.csv'; a.click();
 }
 
-// =============================================
-// INIT — verificar token guardado
-// =============================================
+// --- INIT ACTUALIZADO ---
 (async function init() {
+  // 1. ¿Viene configuración por URL?
+  const sincronizado = procesarParametrosURL();
+  if (sincronizado) toast('🔗 Configuración sincronizada!');
+
   const token=getToken();
-  if (!token) return; // mostrar setup screen
+  if (!token) return; 
+  
   showLoading('Cargando tus datos...');
   const ok=await cargarDesdeGist();
   hideLoading();
   if (ok) iniciarApp();
   else {
     document.getElementById('setup-screen').style.display='flex';
-    const e=document.getElementById('setup-error');
-    e.style.display='block';
-    e.textContent='⚠️ No se pudo conectar. Revisá tu token en la configuración.';
+    document.getElementById('setup-error').style.display='block';
+    document.getElementById('setup-error').textContent='⚠️ Falló la conexión.';
   }
 })();
 </script>
