@@ -85,8 +85,8 @@ main { padding: 15px; max-width: 1100px; margin: 0 auto; min-height: 80vh; paddi
 label { display: block; font-size: 10px; text-transform: uppercase; color: var(--accent); margin-top: 12px; margin-bottom: 4px; }
 input, select, textarea { width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 14px; border-radius: 10px; font-family: var(--font-mono); font-size: 16px; }
 
-.stats-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
-.stat-box { background: var(--surface); padding: 15px; border-radius: var(--radius); border-left: 3px solid var(--accent); }
+.stats-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+.stat-box { background: var(--surface); padding: 15px; border-radius: var(--radius); border-left: 3px solid var(--accent); cursor: pointer; }
 
 .btn-del-hist {
     background: rgba(163, 59, 59, 0.1); border: 1px solid var(--red); color: var(--red);
@@ -125,6 +125,13 @@ input, select, textarea { width: 100%; background: var(--bg); border: 1px solid 
             <div class="stat-box"><div>GANANCIA HOY</div><div class="price" id="stat-ganancia" style="color:var(--green); font-size:16px">$0</div></div>
             <div class="stat-box"><div>VALOR STOCK</div><div class="price" id="stat-stock-val" style="font-size:16px">$0</div></div>
         </div>
+        <div class="stats-row">
+            <div class="stat-box" style="grid-column: span 2; border-left-color: var(--green);" onclick="api.ajustarCaja()">
+                <div>DINERO TOTAL (CAJA) <small style="opacity:0.5">✎ Ajustar</small></div>
+                <div class="price" id="stat-caja-total" style="color:var(--green);">$0</div>
+            </div>
+        </div>
+
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:25px">
             <button class="btn" onclick="openModal('modal-venta')">⚡ VENTA</button>
             <button class="btn sec" onclick="openModal('modal-gasto')">💸 GASTO</button>
@@ -139,7 +146,7 @@ input, select, textarea { width: 100%; background: var(--bg); border: 1px solid 
     <div class="view" id="view-stock">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px">
             <h2 style="font-family:var(--font-display)">STOCK</h2>
-            <button class="btn" style="width:auto" onclick="openModal('modal-item')">+ NUEVO</button>
+            <button class="btn" style="width:auto" onclick="api.resetItemForm(); openModal('modal-item');">+ NUEVO</button>
         </div>
         <div class="grid" id="stock-grid"></div>
     </div>
@@ -163,7 +170,8 @@ input, select, textarea { width: 100%; background: var(--bg); border: 1px solid 
 
 <div class="modal-overlay" id="modal-item">
     <div class="modal"><button class="close-modal" onclick="closeAllModals()">×</button>
-        <h3 style="color:var(--accent)">Nuevo Producto</h3>
+        <h3 style="color:var(--accent)" id="item-modal-title">Nuevo Producto</h3>
+        <input type="hidden" id="in-item-id">
         <label>Nombre</label><input type="text" id="in-item-nombre">
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px">
             <div><label>Costo</label><input type="number" id="in-item-costo"></div>
@@ -209,7 +217,7 @@ input, select, textarea { width: 100%; background: var(--bg); border: 1px solid 
 <div id="toast"></div>
 
 <script>
-let DB = { items: [], combos: [], ventas: [], gastos: [] };
+let DB = { items: [], combos: [], ventas: [], gastos: [], ajusteCaja: 0 };
 const LS_ID = 'mp_cloud_id';
 
 const api = {
@@ -233,16 +241,65 @@ const api = {
         try {
             const res = await fetch(`https://api.npoint.io/${id}?nocache=${Date.now()}`);
             DB = await res.json();
+            if(DB.ajusteCaja === undefined) DB.ajusteCaja = 0;
             renderAll();
         } catch(e) { msg("Error de carga"); }
     },
 
+    resetItemForm() {
+        setVal('in-item-id', '');
+        setVal('in-item-nombre', '');
+        setVal('in-item-costo', '');
+        setVal('in-item-venta', '');
+        setVal('in-item-qty', '');
+        setVal('in-item-min', '2');
+        setTxt('item-modal-title', 'Nuevo Producto');
+    },
+
+    editarItem(id) {
+        const it = DB.items.find(i => i.id === id);
+        if(!it) return;
+        setVal('in-item-id', it.id);
+        setVal('in-item-nombre', it.nombre);
+        setVal('in-item-costo', it.costo);
+        setVal('in-item-venta', it.venta);
+        setVal('in-item-qty', it.qty);
+        setVal('in-item-min', it.min);
+        setTxt('item-modal-title', 'Editar Producto');
+        openModal('modal-item');
+    },
+
     guardarItem() {
-        const item = { id: Date.now().toString(), nombre: val('in-item-nombre'), costo: num('in-item-costo'), venta: num('in-item-venta'), qty: num('in-item-qty'), min: num('in-item-min') };
-        if(!item.nombre) return;
-        DB.items.push(item);
+        const id = val('in-item-id');
+        const itemData = { 
+            nombre: val('in-item-nombre'), 
+            costo: num('in-item-costo'), 
+            venta: num('in-item-venta'), 
+            qty: num('in-item-qty'), 
+            min: num('in-item-min') 
+        };
+
+        if(!itemData.nombre) return;
+
+        if(id) {
+            const idx = DB.items.findIndex(i => i.id === id);
+            DB.items[idx] = { ...DB.items[idx], ...itemData };
+        } else {
+            DB.items.push({ id: Date.now().toString(), ...itemData });
+        }
+        
         closeAllModals();
         this.sync();
+    },
+
+    ajustarCaja() {
+        const nuevo = prompt("Ajustar saldo total de caja (Dinero actual):", numTxt('stat-caja-total'));
+        if (nuevo !== null) {
+            const totalVentas = DB.ventas.reduce((a, b) => a + b.total, 0);
+            const totalGastos = DB.gastos.reduce((a, b) => a + b.monto, 0);
+            DB.ajusteCaja = parseFloat(nuevo) - (totalVentas - totalGastos);
+            this.sync();
+        }
     },
 
     modificarStock(id, cantidad) {
@@ -306,9 +363,19 @@ function renderDashboard() {
     const hoy = new Date().toDateString();
     const vHoy = DB.ventas.filter(v => new Date(v.fecha).toDateString() === hoy);
     const gHoy = DB.gastos.filter(g => new Date(g.fecha).toDateString() === hoy);
-    const ganancia = vHoy.reduce((a,b) => a + (b.total - b.costo), 0) - gHoy.reduce((a,b) => a + b.monto, 0);
-    setTxt('stat-ganancia', fmt(ganancia));
+    
+    // Ganancia Hoy
+    const gananciaHoy = vHoy.reduce((a,b) => a + (b.total - b.costo), 0) - gHoy.reduce((a,b) => a + b.monto, 0);
+    setTxt('stat-ganancia', fmt(gananciaHoy));
+    
+    // Caja Total (Todas las ventas - todos los gastos + ajuste)
+    const totalV = DB.ventas.reduce((a,b) => a + b.total, 0);
+    const totalG = DB.gastos.reduce((a,b) => a + b.monto, 0);
+    const cajaTotal = totalV - totalG + (DB.ajusteCaja || 0);
+    setTxt('stat-caja-total', fmt(cajaTotal));
+
     setTxt('stat-stock-val', fmt(DB.items.reduce((a,b) => a + (b.costo * b.qty), 0)));
+    
     const alertas = DB.items.filter(i => i.qty <= i.min);
     setHtml('dashboard-alertas', alertas.map(i => `
         <div class="card" style="margin-bottom:8px; padding:10px; flex-direction:row; justify-content:space-between; align-items:center">
@@ -320,11 +387,18 @@ function renderDashboard() {
 function renderStock() {
     setHtml('stock-grid', DB.items.map(i => `
         <div class="card">
-            <img src="img/${i.nombre}.jpg" class="prod-img" onerror="this.src='https://via.placeholder.com/150/1c1915/d9c5a3?text=FOTO'">
+            <img src="https://via.placeholder.com/150/1c1915/d9c5a3?text=${i.nombre}" class="prod-img">
             <div style="font-weight:bold; font-size:13px; height:40px; overflow:hidden">${i.nombre}</div>
             <div class="price">${fmt(i.venta)}</div>
-            <div class="qty-controls"><button class="btn-qty" onclick="api.modificarStock('${i.id}', -1)">-</button><span style="font-weight:bold">${i.qty}</span><button class="btn-qty" onclick="api.modificarStock('${i.id}', 1)">+</button></div>
-            <button class="btn danger" style="margin-top:10px; padding:5px; font-size:10px" onclick="if(confirm('¿Eliminar producto?')) { DB.items=DB.items.filter(it=>it.id!=='${i.id}'); api.sync(); }">Eliminar</button>
+            <div class="qty-controls">
+                <button class="btn-qty" onclick="api.modificarStock('${i.id}', -1)">-</button>
+                <span style="font-weight:bold">${i.qty}</span>
+                <button class="btn-qty" onclick="api.modificarStock('${i.id}', 1)">+</button>
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:5px; margin-top:10px">
+                <button class="btn sec" style="padding:5px; font-size:10px" onclick="api.editarItem('${i.id}')">Editar</button>
+                <button class="btn danger" style="padding:5px; font-size:10px" onclick="if(confirm('¿Eliminar producto?')) { DB.items=DB.items.filter(it=>it.id!=='${i.id}'); api.sync(); }">Eliminar</button>
+            </div>
         </div>
     `).join(''));
 }
@@ -377,7 +451,9 @@ function actualizarSelectoresVenta() {
 
 const fmt = n => '$' + parseFloat(n||0).toLocaleString('es-AR');
 const val = id => document.getElementById(id).value;
+const setVal = (id, v) => document.getElementById(id).value = v;
 const num = id => parseFloat(val(id)) || 0;
+const numTxt = id => parseFloat(document.getElementById(id).textContent.replace(/[^0-9.-]+/g,"")) || 0;
 const setTxt = (id, txt) => document.getElementById(id).textContent = txt;
 const setHtml = (id, html) => document.getElementById(id).innerHTML = html;
 function msg(m) { const t = document.getElementById('toast'); t.textContent = m; t.style.display = 'block'; setTimeout(() => t.style.display = 'none', 2000); }
