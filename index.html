@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MATE & PUNTO 🧉 — Gestión Segura</title>
+    <title>MATE & PUNTO 🧉 — Gestión v4.2</title>
     <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -46,7 +46,10 @@
             padding: 15px; position: relative; transition: 0.3s; display: flex; flex-direction: column;
         }
 
-        .prod-img { width: 100%; height: 100%; object-fit: cover; transition: 0.3s; }
+        .prod-img { 
+            width: 100%; height: 140px; object-fit: cover; border-radius: 10px; 
+            margin-bottom: 12px; background: var(--bg); border: 1px solid var(--border);
+        }
 
         .price { font-family: var(--font-display); font-size: 18px; color: var(--accent); margin: 5px 0; }
         .small-label { font-size: 9px; text-transform: uppercase; color: var(--text-dim); letter-spacing: 1px; }
@@ -96,17 +99,28 @@
 </head>
 <body>
 
-<header id="app-header">
+<div id="setup-screen" style="position:fixed;inset:0;background:var(--bg);display:none;align-items:center;justify-content:center;z-index:4000;padding:20px;">
+    <div class="modal" style="text-align:center">
+        <div class="logo" style="font-size:28px; margin-bottom:10px">Mate & Punto</div>
+        <p style="color:var(--text-dim); margin-bottom:20px">Ingresa ID de la API</p>
+        <input type="text" id="cloud-id" placeholder="ID de npoint...">
+        <button class="btn" style="margin-top:15px" onclick="api.manualLogin()">CONECTAR</button>
+    </div>
+</div>
+
+<header id="app-header" style="display:none">
     <div class="logo">Mate & Punto</div>
     <nav>
         <button class="nav-btn active" onclick="switchView('dashboard', this)">Panel</button>
         <button class="nav-btn" onclick="switchView('stock', this)">Stock</button>
         <button class="nav-btn" onclick="switchView('combos', this)">Combos</button>
         <button class="nav-btn" onclick="switchView('finanzas', this)">Finanzas</button>
+        <button class="nav-btn" style="color:var(--red)" onclick="api.logout()">Salir</button>
     </nav>
 </header>
 
-<main id="app-main">
+<main id="app-main" style="display:none">
+    
     <div class="view active" id="view-dashboard">
         <div class="stats-grid">
             <div class="stat-box">
@@ -222,30 +236,51 @@
 <div id="toast"></div>
 
 <script>
-const CLOUD_ID = "d951e27d09ed468c59d4"; // ID Fijo y Seguro
+const DEFAULT_ID = "d951e27d09ed468c59d4";
+const LS_ID = 'mp_cloud_id';
 let DB = { items: [], combos: [], ventas: [], gastos: [], ajusteCaja: 0 };
 
 const api = {
     async sync() {
+        const id = localStorage.getItem(LS_ID);
+        if(!id) return;
         try {
-            await fetch(`https://api.npoint.io/${CLOUD_ID}`, {
+            await fetch(`https://api.npoint.io/${id}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(DB)
             });
             renderAll();
-        } catch(e) { msg("Error de conexión ❌"); }
+        } catch(e) { msg("Error de Sincro ❌"); }
     },
 
     async load() {
+        const id = localStorage.getItem(LS_ID);
         try {
-            const res = await fetch(`https://api.npoint.io/${CLOUD_ID}?nocache=${Date.now()}`);
+            const res = await fetch(`https://api.npoint.io/${id}?nocache=${Date.now()}`);
+            if(!res.ok) throw new Error();
             DB = await res.json();
             if(!DB.ventas) DB.ventas = [];
             if(!DB.gastos) DB.gastos = [];
             if(DB.ajusteCaja === undefined) DB.ajusteCaja = 0;
             renderAll();
-        } catch(e) { msg("Error al cargar datos"); }
+        } catch(e) { 
+            msg("ID no válido o error de red"); 
+            this.logout();
+        }
+    },
+
+    logout() {
+        localStorage.removeItem(LS_ID);
+        location.reload();
+    },
+
+    manualLogin() {
+        const id = document.getElementById('cloud-id').value.trim();
+        if(id) {
+            localStorage.setItem(LS_ID, id);
+            location.reload();
+        }
     },
 
     guardarItem() {
@@ -293,7 +328,7 @@ const api = {
     },
 
     borrarMovimiento(id, tipo) {
-        if(!confirm("¿Eliminar? El stock será devuelto.")) return;
+        if(!confirm("¿Eliminar? Se restaurará stock.")) return;
         if(tipo === 'v') {
             const v = DB.ventas.find(x => x.id === id);
             if(v && v.refs) v.refs.forEach(r => { const it = DB.items.find(i=>i.id===r); if(it) it.qty++; });
@@ -338,23 +373,15 @@ function renderDashboard() {
     const ganTotal = DB.ventas.reduce((a,b)=>a+(b.total-b.costo),0) - DB.gastos.reduce((a,b)=>a+b.monto,0);
     setTxt('stat-ganancia-total', fmt(ganTotal));
     const caja = DB.ventas.reduce((a,b)=>a+b.total,0) - DB.gastos.reduce((a,b)=>a+b.monto,0) + (DB.ajusteCaja || 0);
-    setTxt('stat-caja-actual', fmt(caja));
+    setTxt('stat-caja-actual', caja < 0 ? "$0" : fmt(caja));
     const alertas = DB.items.filter(i => i.qty <= i.min);
     setHtml('dashboard-alertas', alertas.map(i => `<div class="card" style="margin-bottom:8px; padding:10px; flex-direction:row; justify-content:space-between"><span>${i.nombre}</span><b style="color:var(--red)">${i.qty} unid.</b></div>`).join('') || '<p style="opacity:0.5; text-align:center">Todo en orden ✅</p>');
 }
 
 function renderStock() {
-    setHtml('stock-grid', DB.items.map(i => {
-        const fileName = i.nombre.toLowerCase().trim().replace(/\s+/g, '_').replace(/[áéíóú]/g, (l) => {'á':'a','é':'e','í':'i','ó':'o','ú':'u'}[l]);
-        return `
+    setHtml('stock-grid', DB.items.map(i => `
         <div class="card">
-            <div style="position:relative; width:100%; height:140px; overflow:hidden; border-radius:10px; margin-bottom:12px; background:var(--surface2)">
-                <img src="img/${fileName}.jpg" class="prod-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
-                <div style="display:none; width:100%; height:100%; align-items:center; justify-content:center; flex-direction:column; background:var(--surface2); color:var(--accent); border:1px dashed var(--border); border-radius:10px">
-                    <span style="font-size:30px">🧉</span>
-                    <span style="font-size:8px; opacity:0.5; margin-top:5px">SIN IMAGEN</span>
-                </div>
-            </div>
+            <img src="img/${i.nombre.toLowerCase().replace(/\s+/g,'_')}.jpg" class="prod-img" onerror="this.src='https://via.placeholder.com/150/1c1915/d9c5a3?text=S/F'">
             <div style="font-weight:bold; height:35px; overflow:hidden; font-size:12px">${i.nombre}</div>
             <div class="price">${fmt(i.venta)}</div>
             <div class="qty-controls">
@@ -367,7 +394,7 @@ function renderStock() {
                 <button class="btn danger" style="padding:5px" onclick="if(confirm('¿Borrar?')){DB.items=DB.items.filter(x=>x.id!=='${i.id}');api.sync();}">X</button>
             </div>
         </div>
-    `;}).join(''));
+    `).join(''));
 }
 
 function renderFinanzas() {
@@ -430,6 +457,13 @@ function exportarCSV() {
 }
 
 (async function init() {
+    // Si no hay ID guardado, usar el DEFAULT
+    if(!localStorage.getItem(LS_ID)) {
+        localStorage.setItem(LS_ID, DEFAULT_ID);
+    }
+    
+    document.getElementById('app-header').style.display='flex';
+    document.getElementById('app-main').style.display='block';
     await api.load();
 })();
 </script>
