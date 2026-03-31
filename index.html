@@ -13,6 +13,9 @@
   --radius: 14px; --font-display: 'DM Serif Display', serif; --font-mono: 'DM Mono', monospace;
 }
 
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0; -webkit-tap-highlight-color: transparent;}
+body{background:var(--bg);color:var(--text);font-family:var(--font-mono);font-size:14px;line-height:1.6;overflow-x:hidden}
+
 header {
     padding: 12px 15px; background: var(--primary); border-bottom: 2px solid var(--accent);
     display: flex; flex-direction: column; align-items: center; gap: 10px;
@@ -35,17 +38,8 @@ main { padding: 15px; max-width: 1100px; margin: 0 auto; min-height: 80vh; paddi
 .view.active { display: block; }
 @keyframes fadeIn { from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:translateY(0)} }
 
-/* Grid Adaptable para Móvil */
-.grid { 
-    display: grid; 
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); 
-    gap: 12px; 
-}
-
-/* En celulares muy pequeños, 1 sola columna */
-@media (max-width: 380px) {
-    .grid { grid-template-columns: 1fr; }
-}
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
+@media (max-width: 380px) { .grid { grid-template-columns: 1fr; } }
 
 .card { 
     background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
@@ -66,11 +60,9 @@ main { padding: 15px; max-width: 1100px; margin: 0 auto; min-height: 80vh; paddi
     width: 100%;
 }
 .btn:active { transform: scale(0.98); background: var(--accent); color: var(--primary); }
-
 .btn.sec { background: var(--surface2); border-color: var(--border); color: var(--text-dim); }
 .btn.danger { border-color: var(--red); color: var(--red); background: transparent; }
 
-/* Controles de Stock para Dedos */
 .qty-controls {
     display: flex; align-items: center; justify-content: space-between; gap: 5px;
     background: var(--bg); padding: 8px; border-radius: 10px; margin-top: 10px;
@@ -86,45 +78,24 @@ main { padding: 15px; max-width: 1100px; margin: 0 auto; min-height: 80vh; paddi
     backdrop-filter: blur(8px); padding: 15px; padding-top: 50px; overflow-y: auto;
 }
 .modal-overlay.active { display: flex; }
-.modal {
-    background: var(--surface); border: 2px solid var(--accent); padding: 20px;
-    border-radius: 20px; width: 100%; max-width: 450px; position: relative;
-}
+.modal { background: var(--surface); border: 2px solid var(--accent); padding: 20px; border-radius: 20px; width: 100%; max-width: 450px; position: relative; }
+
+.close-modal { position: absolute; top: 10px; right: 15px; background: none; border: none; color: var(--text-dim); font-size: 24px; cursor: pointer; }
 
 label { display: block; font-size: 10px; text-transform: uppercase; color: var(--accent); margin-top: 12px; margin-bottom: 4px; }
-input, select, textarea {
-    width: 100%; background: var(--bg); border: 1px solid var(--border);
-    color: var(--text); padding: 14px; border-radius: 10px; font-family: var(--font-mono);
-    font-size: 16px; /* Evita zoom automático en iPhone */
-}
+input, select, textarea { width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 14px; border-radius: 10px; font-family: var(--font-mono); font-size: 16px; }
 
 .stats-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
 .stat-box { background: var(--surface); padding: 15px; border-radius: var(--radius); border-left: 3px solid var(--accent); }
-.stat-box div:first-child { font-size: 9px; }
-
-#toast {
-    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-    background: var(--accent); color: var(--primary); padding: 12px 20px;
-    border-radius: 50px; font-weight: bold; z-index: 3000; display: none; width: 80%; text-align: center;
-}
 
 .btn-del-hist {
-    background: rgba(163, 59, 59, 0.1); 
-    border: 1px solid var(--red); 
-    color: var(--red);
-    width: 32px; 
-    height: 32px; 
-    border-radius: 8px; 
-    font-size: 14px; 
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    background: rgba(163, 59, 59, 0.1); border: 1px solid var(--red); color: var(--red);
+    width: 32px; height: 32px; border-radius: 8px; font-size: 14px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
 }
-.btn-del-hist:active {
-    background: var(--red);
-    color: white;
-}
+.btn-del-hist:active { background: var(--red); color: white; }
+
+#toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--accent); color: var(--primary); padding: 12px 20px; border-radius: 50px; font-weight: bold; z-index: 3000; display: none; width: 80%; text-align: center; }
 </style>
 </head>
 <body>
@@ -151,20 +122,13 @@ input, select, textarea {
 <main id="app-main" style="display:none">
     <div class="view active" id="view-dashboard">
         <div class="stats-row">
-            <div class="stat-box">
-                <div>GANANCIA HOY</div>
-                <div class="price" id="stat-ganancia" style="color:var(--green); font-size:16px">$0</div>
-            </div>
-            <div class="stat-box">
-                <div>VALOR STOCK</div>
-                <div class="price" id="stat-stock-val" style="font-size:16px">$0</div>
-            </div>
+            <div class="stat-box"><div>GANANCIA HOY</div><div class="price" id="stat-ganancia" style="color:var(--green); font-size:16px">$0</div></div>
+            <div class="stat-box"><div>VALOR STOCK</div><div class="price" id="stat-stock-val" style="font-size:16px">$0</div></div>
         </div>
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:25px">
             <button class="btn" onclick="openModal('modal-venta')">⚡ VENTA</button>
             <button class="btn sec" onclick="openModal('modal-gasto')">💸 GASTO</button>
         </div>
-        
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px">
              <h3 style="font-family:var(--font-display); color:var(--accent);">Alertas</h3>
              <button class="btn sec" style="width:auto; padding:5px 10px" onclick="api.sync()">🔄 Nube</button>
@@ -198,8 +162,7 @@ input, select, textarea {
 </main>
 
 <div class="modal-overlay" id="modal-item">
-    <div class="modal">
-        <button class="close-modal" onclick="closeAllModals()">×</button>
+    <div class="modal"><button class="close-modal" onclick="closeAllModals()">×</button>
         <h3 style="color:var(--accent)">Nuevo Producto</h3>
         <label>Nombre</label><input type="text" id="in-item-nombre">
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px">
@@ -215,11 +178,9 @@ input, select, textarea {
 </div>
 
 <div class="modal-overlay" id="modal-venta">
-    <div class="modal">
-        <button class="close-modal" onclick="closeAllModals()">×</button>
+    <div class="modal"><button class="close-modal" onclick="closeAllModals()">×</button>
         <h3 style="color:var(--accent)">Registrar Venta</h3>
-        <label>Tipo</label>
-        <select id="in-v-tipo" onchange="actualizarSelectoresVenta()"><option value="p">Producto Único</option><option value="c">Combo Armado</option></select>
+        <label>Tipo</label><select id="in-v-tipo" onchange="actualizarSelectoresVenta()"><option value="p">Producto Único</option><option value="c">Combo Armado</option></select>
         <label>Seleccionar ítem</label><select id="in-v-id"></select>
         <label>Notas</label><textarea id="in-v-nota" rows="2"></textarea>
         <button class="btn" style="margin-top:20px" onclick="api.confirmarVenta()">CONFIRMAR VENTA</button>
@@ -227,8 +188,7 @@ input, select, textarea {
 </div>
 
 <div class="modal-overlay" id="modal-gasto">
-    <div class="modal">
-        <button class="close-modal" onclick="closeAllModals()">×</button>
+    <div class="modal"><button class="close-modal" onclick="closeAllModals()">×</button>
         <h3 style="color:var(--red)">Registrar Gasto</h3>
         <label>Concepto</label><input type="text" id="in-g-nombre">
         <label>Monto</label><input type="number" id="in-g-monto">
@@ -237,12 +197,10 @@ input, select, textarea {
 </div>
 
 <div class="modal-overlay" id="modal-combo">
-    <div class="modal">
-        <button class="close-modal" onclick="closeAllModals()">×</button>
+    <div class="modal"><button class="close-modal" onclick="closeAllModals()">×</button>
         <h3>Nuevo Combo</h3>
         <label>Nombre</label><input type="text" id="in-c-nombre">
-        <label>Productos (Tocar para elegir)</label>
-        <select id="in-c-items" multiple style="height:120px"></select>
+        <label>Productos</label><select id="in-c-items" multiple style="height:120px"></select>
         <label>Precio Final</label><input type="number" id="in-c-venta">
         <button class="btn" style="margin-top:20px" onclick="api.guardarCombo()">GUARDAR COMBO</button>
     </div>
@@ -270,15 +228,15 @@ const api = {
     },
 
     async load() {
-    const id = localStorage.getItem(LS_ID);
-    if(!id) return;
-    try {
-        // Agregamos ?nocache=... para que el celular no use info vieja
-        const res = await fetch(`https://api.npoint.io/${id}?nocache=${Date.now()}`);
-        DB = await res.json();
-        renderAll();
-    } catch(e) { msg("Error al cargar datos"); }
-},
+        const id = localStorage.getItem(LS_ID);
+        if(!id) return;
+        try {
+            const res = await fetch(`https://api.npoint.io/${id}?nocache=${Date.now()}`);
+            DB = await res.json();
+            renderAll();
+        } catch(e) { msg("Error de carga"); }
+    },
+
     guardarItem() {
         const item = { id: Date.now().toString(), nombre: val('in-item-nombre'), costo: num('in-item-costo'), venta: num('in-item-venta'), qty: num('in-item-qty'), min: num('in-item-min') };
         if(!item.nombre) return;
@@ -289,29 +247,24 @@ const api = {
 
     modificarStock(id, cantidad) {
         const item = DB.items.find(i => i.id === id);
-        if(item) {
-            item.qty = Math.max(0, item.qty + cantidad);
-            this.sync();
-        }
+        if(item) { item.qty = Math.max(0, item.qty + cantidad); this.sync(); }
     },
 
     confirmarVenta() {
         const tipo = val('in-v-tipo'), targetId = val('in-v-id');
         let venta = { id: Date.now(), fecha: new Date().toISOString(), nota: val('in-v-nota') };
-
         if(tipo === 'p') {
             const it = DB.items.find(i => i.id === targetId);
             if(!it || it.qty < 1) return alert("Sin stock");
-            it.qty--;
-            venta.nombre = it.nombre; venta.total = it.venta; venta.costo = it.costo;
+            it.qty--; venta.nombre = it.nombre; venta.total = it.venta; venta.costo = it.costo; venta.itemsRef = [it.id];
         } else {
             const co = DB.combos.find(c => c.id === targetId);
-            let cTotal = 0;
+            let cTotal = 0; let refs = [];
             co.items.forEach(id => {
                 const it = DB.items.find(i => i.id === id);
-                if(it) { it.qty--; cTotal += it.costo; }
+                if(it) { it.qty--; cTotal += it.costo; refs.push(it.id); }
             });
-            venta.nombre = "Combo: "+co.nombre; venta.total = co.venta; venta.costo = cTotal;
+            venta.nombre = "Combo: "+co.nombre; venta.total = co.venta; venta.costo = cTotal; venta.itemsRef = refs;
         }
         DB.ventas.push(venta);
         closeAllModals();
@@ -324,36 +277,29 @@ const api = {
         this.sync();
     },
 
+    borrarRegistro(id, tipo) {
+        if(!confirm("¿Borrar este registro? Devolverá stock automáticamente.")) return;
+        if(tipo === 'v') {
+            const v = DB.ventas.find(x => x.id === id);
+            if(v && v.itemsRef) {
+                v.itemsRef.forEach(refId => {
+                    const it = DB.items.find(i => i.id === refId);
+                    if(it) it.qty++;
+                });
+            }
+            DB.ventas = DB.ventas.filter(x => x.id !== id);
+        } else {
+            DB.gastos = DB.gastos.filter(x => x.id !== id);
+        }
+        this.sync();
+    },
+
     guardarCombo() {
         const sel = document.getElementById('in-c-items');
         DB.combos.push({ id: 'c'+Date.now(), nombre: val('in-c-nombre'), items: [...sel.selectedOptions].map(o => o.value), venta: num('in-c-venta') });
         closeAllModals();
         this.sync();
     }
-
-  confirmarVenta() {
-        const tipo = val('in-v-tipo'), targetId = val('in-v-id');
-        let venta = { id: Date.now(), fecha: new Date().toISOString(), nota: val('in-v-nota') };
-        
-        if(tipo === 'p') {
-            const it = DB.items.find(i => i.id === targetId);
-            if(!it || it.qty < 1) return alert("Sin stock");
-            it.qty--; 
-            venta.nombre = it.nombre; venta.total = it.venta; venta.costo = it.costo;
-            venta.itemsRef = [it.id]; // <--- AGREGAR ESTO para rastrear qué producto devolver
-        } else {
-            const co = DB.combos.find(c => c.id === targetId);
-            let cTotal = 0; let refs = [];
-            co.items.forEach(id => {
-                const it = DB.items.find(i => i.id === id);
-                if(it) { it.qty--; cTotal += it.costo; refs.push(it.id); }
-            });
-            venta.nombre = "Combo: "+co.nombre; venta.total = co.venta; venta.costo = cTotal;
-            venta.itemsRef = refs; // <--- AGREGAR ESTO
-        }
-        DB.ventas.push(venta);
-        closeAllModals();
-        this.sync();
 };
 
 function renderDashboard() {
@@ -366,8 +312,7 @@ function renderDashboard() {
     const alertas = DB.items.filter(i => i.qty <= i.min);
     setHtml('dashboard-alertas', alertas.map(i => `
         <div class="card" style="margin-bottom:8px; padding:10px; flex-direction:row; justify-content:space-between; align-items:center">
-            <span style="font-size:12px">${i.nombre}</span>
-            <span style="color:var(--red); font-weight:bold">STOCK: ${i.qty}</span>
+            <span style="font-size:12px">${i.nombre}</span><span style="color:var(--red); font-weight:bold">STOCK: ${i.qty}</span>
         </div>
     `).join('') || '<p style="text-align:center; opacity:0.5; padding:20px">Todo en orden ✅</p>');
 }
@@ -378,19 +323,13 @@ function renderStock() {
             <img src="img/${i.nombre}.jpg" class="prod-img" onerror="this.src='https://via.placeholder.com/150/1c1915/d9c5a3?text=FOTO'">
             <div style="font-weight:bold; font-size:13px; height:40px; overflow:hidden">${i.nombre}</div>
             <div class="price">${fmt(i.venta)}</div>
-            <div class="qty-controls">
-                <button class="btn-qty" onclick="api.modificarStock('${i.id}', -1)">-</button>
-                <span style="font-weight:bold">${i.qty}</span>
-                <button class="btn-qty" onclick="api.modificarStock('${i.id}', 1)">+</button>
-            </div>
-            <button class="btn danger" style="margin-top:10px; padding:5px; font-size:10px" onclick="if(confirm('¿Eliminar?')) { DB.items=DB.items.filter(it=>it.id!=='${i.id}'); api.sync(); }">Eliminar</button>
+            <div class="qty-controls"><button class="btn-qty" onclick="api.modificarStock('${i.id}', -1)">-</button><span style="font-weight:bold">${i.qty}</span><button class="btn-qty" onclick="api.modificarStock('${i.id}', 1)">+</button></div>
+            <button class="btn danger" style="margin-top:10px; padding:5px; font-size:10px" onclick="if(confirm('¿Eliminar producto?')) { DB.items=DB.items.filter(it=>it.id!=='${i.id}'); api.sync(); }">Eliminar</button>
         </div>
     `).join(''));
 }
 
-function renderCombos() {
-    setHtml('combos-grid', DB.combos.map(c => `<div class="card"><div style="font-weight:bold">${c.nombre}</div><div class="price">${fmt(c.venta)}</div><button class="btn danger" onclick="if(confirm('¿Borrar?')){DB.combos=DB.combos.filter(x=>x.id!=='${c.id}');api.sync();}">Borrar Combo</button></div>`).join(''));
-}
+function renderCombos() { setHtml('combos-grid', DB.combos.map(c => `<div class="card"><div style="font-weight:bold">${c.nombre}</div><div class="price">${fmt(c.venta)}</div><button class="btn danger" onclick="if(confirm('¿Borrar?')){DB.combos=DB.combos.filter(x=>x.id!=='${c.id}');api.sync();}">Borrar Combo</button></div>`).join('')); }
 
 function renderFinanzas() {
     const all = [
@@ -415,22 +354,27 @@ function renderFinanzas() {
 }
 
 function renderAll() { renderDashboard(); renderStock(); renderCombos(); renderFinanzas(); }
+
 function switchView(id, btn) {
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
     document.getElementById('view-'+id).classList.add('active');
     btn.classList.add('active');
 }
+
 function openModal(id) { 
     document.getElementById(id).classList.add('active');
     if(id==='modal-venta') actualizarSelectoresVenta();
     if(id==='modal-combo') document.getElementById('in-c-items').innerHTML = DB.items.map(i => `<option value="${i.id}">${i.nombre}</option>`).join('');
 }
+
 function closeAllModals() { document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active')); }
+
 function actualizarSelectoresVenta() {
     const t = val('in-v-tipo'), s = document.getElementById('in-v-id');
     s.innerHTML = (t === 'p' ? DB.items : DB.combos).map(x => `<option value="${x.id}">${x.nombre}</option>`).join('');
 }
+
 const fmt = n => '$' + parseFloat(n||0).toLocaleString('es-AR');
 const val = id => document.getElementById(id).value;
 const num = id => parseFloat(val(id)) || 0;
