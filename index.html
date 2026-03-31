@@ -44,7 +44,7 @@ main { padding: 25px; max-width: 1100px; margin: 0 auto; min-height: 80vh; }
 .card:hover { border-color: var(--accent); transform: translateY(-3px); }
 
 .prod-img { 
-    width: 100%; height: 160px; object-fit: cover; border-radius: 10px; 
+    width: 100%; height: 180px; object-fit: cover; border-radius: 10px; 
     margin-bottom: 15px; background: var(--bg); border: 1px solid var(--border);
 }
 
@@ -59,6 +59,17 @@ main { padding: 25px; max-width: 1100px; margin: 0 auto; min-height: 80vh; }
 .btn.sec { background: var(--surface2); border-color: var(--border); color: var(--text-dim); }
 .btn.danger { border-color: var(--red); color: var(--red); background: transparent; }
 .btn.danger:hover { background: var(--red); color: white; }
+
+/* Estilo para los botones de flecha */
+.qty-controls {
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    background: var(--bg); padding: 5px; border-radius: 8px; margin-top: 10px;
+}
+.btn-qty {
+    background: var(--surface2); border: 1px solid var(--border); color: var(--accent);
+    width: 30px; height: 30px; border-radius: 5px; cursor: pointer; font-weight: bold;
+}
+.btn-qty:hover { background: var(--accent); color: var(--primary); }
 
 .modal-overlay {
     position: fixed; inset: 0; background: rgba(0,0,0,0.9); 
@@ -91,7 +102,6 @@ input:focus { border-color: var(--accent); }
     position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
     background: var(--accent); color: var(--primary); padding: 12px 25px;
     border-radius: 50px; font-weight: bold; z-index: 3000; display: none;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.4);
 }
 </style>
 </head>
@@ -103,7 +113,6 @@ input:focus { border-color: var(--accent); }
         <p style="color:var(--text-dim); margin-bottom:25px">Gestión Cloud con nPoint</p>
         <input type="text" id="cloud-id" placeholder="Pega tu nPoint ID aquí...">
         <button class="btn" style="width:100%; margin-top:15px" onclick="iniciarCloud()">Sincronizar Sistema →</button>
-        <p style="font-size:10px; color:var(--text-dim); margin-top:15px">Usa el mismo ID en tu PC y Celular para compartir datos.</p>
     </div>
 </div>
 
@@ -135,7 +144,7 @@ input:focus { border-color: var(--accent); }
         </div>
         <div style="display:flex; gap:10px; margin-bottom:30px">
             <button class="btn" onclick="openModal('modal-venta')">⚡ AGREGAR VENTA</button>
-            <button class="btn sec" onclick="openModal('modal-gasto')">💸 AGREGAR GASTO EXTRA</button>
+            <button class="btn sec" onclick="openModal('modal-gasto')">💸 GASTO EXTRA</button>
         </div>
         <h3 style="font-family:var(--font-display); color:var(--accent); margin-bottom:15px">Alertas Críticas</h3>
         <div id="dashboard-alertas"></div>
@@ -177,52 +186,18 @@ input:focus { border-color: var(--accent); }
             <div><label>Cantidad</label><input type="number" id="in-item-qty"></div>
             <div><label>Stock Mínimo</label><input type="number" id="in-item-min" value="2"></div>
         </div>
-        <button class="btn" style="width:100%; margin-top:20px" onclick="api.guardarItem()">Guardar en Stock</button>
+        <p style="font-size:10px; color:var(--text-dim); margin-top:10px">⚠️ Recuerda guardar la foto en /img como: [Nombre].jpg</p>
+        <button class="btn" style="width:100%; margin-top:10px" onclick="api.guardarItem()">Guardar en Stock</button>
     </div>
 </div>
 
-<div class="modal-overlay" id="modal-venta">
-    <div class="modal">
-        <button class="close-modal" onclick="closeAllModals()">×</button>
-        <h3 style="font-family:var(--font-display); color:var(--accent)">Registrar Venta</h3>
-        <label>Tipo</label>
-        <select id="in-v-tipo" onchange="actualizarSelectoresVenta()"><option value="p">Producto</option><option value="c">Combo</option></select>
-        <label>Seleccionar Ítem</label>
-        <select id="in-v-id"></select>
-        <label>Notas adicionales</label>
-        <textarea id="in-v-nota" rows="2"></textarea>
-        <button class="btn" style="width:100%; margin-top:20px" onclick="api.confirmarVenta()">Cobrar Ahora</button>
-    </div>
-</div>
-
-<div class="modal-overlay" id="modal-gasto">
-    <div class="modal">
-        <button class="close-modal" onclick="closeAllModals()">×</button>
-        <h3 style="color:var(--red)">Gasto Extra</h3>
-        <label>Concepto</label><input type="text" id="in-g-nombre">
-        <label>Monto</label><input type="number" id="in-g-monto">
-        <button class="btn danger" style="width:100%; margin-top:20px" onclick="api.guardarGasto()">Registrar Gasto</button>
-    </div>
-</div>
-
-<div class="modal-overlay" id="modal-combo">
-    <div class="modal">
-        <button class="close-modal" onclick="closeAllModals()">×</button>
-        <h3>Crear Combo</h3>
-        <label>Nombre</label><input type="text" id="in-c-nombre">
-        <label>Productos (Manten Ctrl)</label>
-        <select id="in-c-items" multiple style="height:100px"></select>
-        <label>Precio Combo</label><input type="number" id="in-c-venta">
-        <button class="btn" style="width:100%; margin-top:20px" onclick="api.guardarCombo()">Guardar Combo</button>
-    </div>
-</div>
+<div class="modal-overlay" id="modal-venta"><div class="modal"><button class="close-modal" onclick="closeAllModals()">×</button><h3 style="font-family:var(--font-display); color:var(--accent)">Registrar Venta</h3><label>Tipo</label><select id="in-v-tipo" onchange="actualizarSelectoresVenta()"><option value="p">Producto</option><option value="c">Combo</option></select><label>Seleccionar Ítem</label><select id="in-v-id"></select><label>Notas adicionales</label><textarea id="in-v-nota" rows="2"></textarea><button class="btn" style="width:100%; margin-top:20px" onclick="api.confirmarVenta()">Cobrar Ahora</button></div></div>
+<div class="modal-overlay" id="modal-gasto"><div class="modal"><button class="close-modal" onclick="closeAllModals()">×</button><h3 style="color:var(--red)">Gasto Extra</h3><label>Concepto</label><input type="text" id="in-g-nombre"><label>Monto</label><input type="number" id="in-g-monto"><button class="btn danger" style="width:100%; margin-top:20px" onclick="api.guardarGasto()">Registrar Gasto</button></div></div>
+<div class="modal-overlay" id="modal-combo"><div class="modal"><button class="close-modal" onclick="closeAllModals()">×</button><h3>Crear Combo</h3><label>Nombre</label><input type="text" id="in-c-nombre"><label>Productos (Manten Ctrl)</label><select id="in-c-items" multiple style="height:100px"></select><label>Precio Combo</label><input type="number" id="in-c-venta"><button class="btn" style="width:100%; margin-top:20px" onclick="api.guardarCombo()">Guardar Combo</button></div></div>
 
 <div id="toast"></div>
 
 <script>
-// =============================================
-// MOTOR DE DATOS NPOINT (Sincronizado)
-// =============================================
 let DB = { items: [], combos: [], ventas: [], gastos: [] };
 const LS_ID = 'mp_cloud_id';
 
@@ -233,7 +208,7 @@ const api = {
         msg("Sincronizando ☁️...");
         try {
             await fetch(`https://api.npoint.io/${id}`, {
-                method: 'POST', // nPoint usa POST para actualizar el bin completo
+                method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(DB)
             });
@@ -267,6 +242,15 @@ const api = {
         this.sync();
     },
 
+    // NUEVA FUNCIÓN: Modificar Stock rápido
+    modificarStock(id, cantidad) {
+        const item = DB.items.find(i => i.id === id);
+        if(item) {
+            item.qty = Math.max(0, item.qty + cantidad);
+            this.sync();
+        }
+    },
+
     borrarItem(id) {
         if(!confirm("¿Eliminar producto?")) return;
         DB.items = DB.items.filter(i => i.id !== id);
@@ -286,6 +270,12 @@ const api = {
         this.sync();
     },
 
+    borrarCombo(id) {
+        if(!confirm("¿Eliminar combo?")) return;
+        DB.combos = DB.combos.filter(c => c.id !== id);
+        this.sync();
+    },
+
     confirmarVenta() {
         const tipo = val('in-v-tipo');
         const targetId = val('in-v-id');
@@ -298,6 +288,7 @@ const api = {
             venta.nombre = it.nombre; venta.total = it.venta; venta.costo = it.costo;
         } else {
             const co = DB.combos.find(c => c.id === targetId);
+            if(!co) return;
             let cTotal = 0;
             co.items.forEach(id => {
                 const it = DB.items.find(i => i.id === id);
@@ -314,25 +305,8 @@ const api = {
         DB.gastos.push({ id: Date.now(), fecha: new Date().toISOString(), nombre: val('in-g-nombre'), monto: num('in-g-monto') });
         closeAllModals();
         this.sync();
-    },
-
-    borrarRegistro(id, tipo) {
-        if(!confirm("¿Borrar registro financiero?")) return;
-        if(tipo === 'v') DB.ventas = DB.ventas.filter(v => v.id !== id);
-        else DB.gastos = DB.gastos.filter(g => g.id !== id);
-        this.sync();
     }
 };
-
-// =============================================
-// NAVEGACIÓN Y RENDER (MANTENIDO)
-// =============================================
-function renderAll() {
-    renderDashboard();
-    renderStock();
-    renderCombos();
-    renderFinanzas();
-}
 
 function renderDashboard() {
     const hoy = new Date().toDateString();
@@ -352,17 +326,26 @@ function renderDashboard() {
 }
 
 function renderStock() {
-    document.getElementById('stock-grid').innerHTML = DB.items.map(i => `
+    document.getElementById('stock-grid').innerHTML = DB.items.map(i => {
+        const rutaImagen = `img/${i.nombre}.jpg`; 
+        return `
         <div class="card">
-            <img src="https://via.placeholder.com/200/1c1915/d9c5a3?text=${i.nombre[0]}" class="prod-img">
+            <img src="${rutaImagen}" class="prod-img" onerror="this.src='https://via.placeholder.com/200/1c1915/d9c5a3?text=SIN+FOTO'">
             <div style="font-weight:bold">${i.nombre}</div>
             <div class="price">${fmt(i.venta)}</div>
-            <div style="font-size:10px; color:var(--text-dim)">Stock: ${i.qty}</div>
+            <div style="font-size:10px; color:var(--text-dim)">Stock Actual: ${i.qty}</div>
+            
+            <div class="qty-controls">
+                <button class="btn-qty" onclick="api.modificarStock('${i.id}', -1)">▼</button>
+                <span style="font-weight:bold; font-size:16px">${i.qty}</span>
+                <button class="btn-qty" onclick="api.modificarStock('${i.id}', 1)">▲</button>
+            </div>
+
             <div style="margin-top:15px; display:flex; gap:5px">
-                <button class="btn danger" onclick="api.borrarItem('${i.id}')">🗑</button>
+                <button class="btn danger" style="width:100%" onclick="api.borrarItem('${i.id}')">Eliminar</button>
             </div>
         </div>
-    `).join('');
+    `}).join('');
 }
 
 function renderCombos() {
@@ -394,13 +377,13 @@ function renderFinanzas() {
     `).join(''));
 }
 
+function renderAll() { renderDashboard(); renderStock(); renderCombos(); renderFinanzas(); }
 function switchView(id, btn) {
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
     document.getElementById('view-'+id).classList.add('active');
     btn.classList.add('active');
 }
-
 function openModal(id) { 
     document.getElementById(id).classList.add('active');
     if(id === 'modal-venta') actualizarSelectoresVenta();
@@ -408,28 +391,22 @@ function openModal(id) {
         document.getElementById('in-c-items').innerHTML = DB.items.map(i => `<option value="${i.id}">${i.nombre}</option>`).join('');
     }
 }
-
 function closeAllModals() { document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active')); }
-
 function actualizarSelectoresVenta() {
     const tipo = val('in-v-tipo');
     const s = document.getElementById('in-v-id');
     s.innerHTML = (tipo === 'p' ? DB.items : DB.combos).map(x => `<option value="${x.id}">${x.nombre}</option>`).join('');
 }
-
 const fmt = n => '$' + parseFloat(n||0).toLocaleString('es-AR');
 const val = id => document.getElementById(id).value;
 const num = id => parseFloat(val(id)) || 0;
 const setTxt = (id, txt) => document.getElementById(id).textContent = txt;
 const setHtml = (id, html) => document.getElementById(id).innerHTML = html;
-
 function msg(m) {
     const t = document.getElementById('toast');
     t.textContent = m; t.style.display = 'block';
     setTimeout(() => t.style.display = 'none', 2500);
 }
-
-// INICIO CLOUD
 async function iniciarCloud() {
     const id = val('cloud-id').trim();
     if(!id) return alert("Pega tu ID");
@@ -439,7 +416,6 @@ async function iniciarCloud() {
     document.getElementById('app-header').style.display = 'flex';
     document.getElementById('app-main').style.display = 'block';
 }
-
 function exportarCSV() {
     let csv = "Tipo,Nombre,Total,Fecha\n";
     DB.ventas.forEach(v => csv += `VENTA,${v.nombre},${v.total},${v.fecha}\n`);
@@ -448,8 +424,6 @@ function exportarCSV() {
     a.href = URL.createObjectURL(new Blob([csv], {type:'text/csv'}));
     a.download = 'mate_punto_finanzas.csv'; a.click();
 }
-
-// INIT
 (async function init() {
     const id = localStorage.getItem(LS_ID);
     if(id) {
@@ -459,8 +433,6 @@ function exportarCSV() {
         await api.load();
     }
 })();
-
-// Refresco al volver a la pestaña
 window.addEventListener('focus', () => api.load());
 </script>
 </body>
