@@ -232,22 +232,17 @@ let DB = { items: [], combos: [], ventas: [], gastos: [], ajusteCaja: 0 };
 
 const api = {
     async sync() {
-    const id = localStorage.getItem(LS_ID);
-    if(!id) return;
-    try {
-        const response = await fetch(`https://api.npoint.io/${id}`, {
-            method: 'POST', // Nota: npoint a veces requiere PUT según la configuración
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(DB)
-        });
-        if(response.ok) {
-            msg("Sincronizado ✅");
-            renderAll(); 
-        }
-    } catch(e) { 
-        msg("Error de red ❌"); 
-    }
-}}
+        const id = localStorage.getItem(LS_ID);
+        if(!id) return;
+        try {
+            await fetch(`https://api.npoint.io/${id}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(DB)
+            });
+            renderAll();
+        } catch(e) { msg("Error de Sincro ❌"); }
+    },
 
     async load() {
         const id = localStorage.getItem(LS_ID);
