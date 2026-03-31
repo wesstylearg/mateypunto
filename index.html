@@ -255,15 +255,15 @@ const api = {
     },
 
     async load() {
-        const id = localStorage.getItem(LS_ID);
-        if(!id) return;
-        try {
-            const res = await fetch(`https://api.npoint.io/${id}`);
-            DB = await res.json();
-            renderAll();
-        } catch(e) { msg("Error de carga"); }
-    },
-
+    const id = localStorage.getItem(LS_ID);
+    if(!id) return;
+    try {
+        // Agregamos ?nocache=... para que el celular no use info vieja
+        const res = await fetch(`https://api.npoint.io/${id}?nocache=${Date.now()}`);
+        DB = await res.json();
+        renderAll();
+    } catch(e) { msg("Error al cargar datos"); }
+},
     guardarItem() {
         const item = { id: Date.now().toString(), nombre: val('in-item-nombre'), costo: num('in-item-costo'), venta: num('in-item-venta'), qty: num('in-item-qty'), min: num('in-item-min') };
         if(!item.nombre) return;
