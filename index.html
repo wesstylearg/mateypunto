@@ -110,6 +110,24 @@ input, select, textarea {
     background: var(--accent); color: var(--primary); padding: 12px 20px;
     border-radius: 50px; font-weight: bold; z-index: 3000; display: none; width: 80%; text-align: center;
 }
+
+.btn-del-hist {
+    background: rgba(163, 59, 59, 0.1); 
+    border: 1px solid var(--red); 
+    color: var(--red);
+    width: 32px; 
+    height: 32px; 
+    border-radius: 8px; 
+    font-size: 14px; 
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.btn-del-hist:active {
+    background: var(--red);
+    color: white;
+}
 </style>
 </head>
 <body>
@@ -315,6 +333,30 @@ const api = {
         closeAllModals();
         this.sync();
     }
+
+  confirmarVenta() {
+        const tipo = val('in-v-tipo'), targetId = val('in-v-id');
+        let venta = { id: Date.now(), fecha: new Date().toISOString(), nota: val('in-v-nota') };
+        
+        if(tipo === 'p') {
+            const it = DB.items.find(i => i.id === targetId);
+            if(!it || it.qty < 1) return alert("Sin stock");
+            it.qty--; 
+            venta.nombre = it.nombre; venta.total = it.venta; venta.costo = it.costo;
+            venta.itemsRef = [it.id]; // <--- AGREGAR ESTO para rastrear qué producto devolver
+        } else {
+            const co = DB.combos.find(c => c.id === targetId);
+            let cTotal = 0; let refs = [];
+            co.items.forEach(id => {
+                const it = DB.items.find(i => i.id === id);
+                if(it) { it.qty--; cTotal += it.costo; refs.push(it.id); }
+            });
+            venta.nombre = "Combo: "+co.nombre; venta.total = co.venta; venta.costo = cTotal;
+            venta.itemsRef = refs; // <--- AGREGAR ESTO
+        }
+        DB.ventas.push(venta);
+        closeAllModals();
+        this.sync();
 };
 
 function renderDashboard() {
@@ -354,15 +396,22 @@ function renderCombos() {
 }
 
 function renderFinanzas() {
-    const all = [...DB.ventas.map(v=>({...v,t:'v'})), ...DB.gastos.map(g=>({...g,t:'g',total:g.monto}))].sort((a,b)=>new Date(b.fecha)-new Date(a.fecha));
+    const all = [
+        ...DB.ventas.map(v=>({...v,t:'v'})), 
+        ...DB.gastos.map(g=>({...g,t:'g',total:g.monto}))
+    ].sort((a,b)=>new Date(b.fecha)-new Date(a.fecha));
+    
     setHtml('historial-lista', all.map(x => `
         <div class="card" style="margin-bottom:8px; padding:10px; border-left:4px solid ${x.t==='v'?'var(--green)':'var(--red)'}">
             <div style="display:flex; justify-content:space-between; align-items:center">
-                <div>
+                <div style="flex:1">
                     <div style="font-weight:bold; font-size:12px">${x.nombre}</div>
                     <div style="font-size:9px; color:var(--text-dim)">${new Date(x.fecha).toLocaleTimeString()}</div>
                 </div>
-                <div style="font-weight:bold; color:${x.t==='v'?'var(--green)':'var(--red)'}">${fmt(x.total)}</div>
+                <div style="text-align:right; margin-right:15px">
+                    <div style="font-weight:bold; color:${x.t==='v'?'var(--green)':'var(--red)'}">${fmt(x.total)}</div>
+                </div>
+                <button class="btn-del-hist" onclick="api.borrarRegistro('${x.id}', '${x.t}')">✕</button>
             </div>
         </div>
     `).join(''));
