@@ -99,15 +99,6 @@
 </head>
 <body>
 
-<div id="setup-screen" style="position:fixed;inset:0;background:var(--bg);display:none;align-items:center;justify-content:center;z-index:4000;padding:20px;">
-    <div class="modal" style="text-align:center">
-        <div class="logo" style="font-size:28px; margin-bottom:10px">Mate & Punto</div>
-        <p style="color:var(--text-dim); margin-bottom:20px">Ingresa ID de la API</p>
-        <input type="text" id="cloud-id" placeholder="ID de npoint...">
-        <button class="btn" style="margin-top:15px" onclick="api.manualLogin()">CONECTAR</button>
-    </div>
-</div>
-
 <header id="app-header" style="display:none">
     <div class="logo">Mate & Punto</div>
     <nav>
@@ -115,7 +106,6 @@
         <button class="nav-btn" onclick="switchView('stock', this)">Stock</button>
         <button class="nav-btn" onclick="switchView('combos', this)">Combos</button>
         <button class="nav-btn" onclick="switchView('finanzas', this)">Finanzas</button>
-        <button class="nav-btn" style="color:var(--red)" onclick="api.logout()">Salir</button>
     </nav>
 </header>
 
@@ -265,21 +255,7 @@ const api = {
             if(DB.ajusteCaja === undefined) DB.ajusteCaja = 0;
             renderAll();
         } catch(e) { 
-            msg("ID no válido o error de red"); 
-            this.logout();
-        }
-    },
-
-    logout() {
-        localStorage.removeItem(LS_ID);
-        location.reload();
-    },
-
-    manualLogin() {
-        const id = document.getElementById('cloud-id').value.trim();
-        if(id) {
-            localStorage.setItem(LS_ID, id);
-            location.reload();
+            msg("Error de red"); 
         }
     },
 
@@ -379,9 +355,12 @@ function renderDashboard() {
 }
 
 function renderStock() {
-    setHtml('stock-grid', DB.items.map(i => `
+    setHtml('stock-grid', DB.items.map(i => {
+        // CORRECCIÓN IMÁGENES: Convierte a minúsculas y reemplaza espacios por guiones bajos
+        const imgName = i.nombre.toLowerCase().trim().replace(/\s+/g,'_');
+        return `
         <div class="card">
-            <img src="img/${i.nombre.toLowerCase().replace(/\s+/g,'_')}.jpg" class="prod-img" onerror="this.src='https://via.placeholder.com/150/1c1915/d9c5a3?text=S/F'">
+            <img src="img/${imgName}.jpg" class="prod-img" onerror="this.src='https://via.placeholder.com/150/1c1915/d9c5a3?text=S/F'">
             <div style="font-weight:bold; height:35px; overflow:hidden; font-size:12px">${i.nombre}</div>
             <div class="price">${fmt(i.venta)}</div>
             <div class="qty-controls">
@@ -394,7 +373,7 @@ function renderStock() {
                 <button class="btn danger" style="padding:5px" onclick="if(confirm('¿Borrar?')){DB.items=DB.items.filter(x=>x.id!=='${i.id}');api.sync();}">X</button>
             </div>
         </div>
-    `).join(''));
+    `}).join(''));
 }
 
 function renderFinanzas() {
@@ -457,7 +436,6 @@ function exportarCSV() {
 }
 
 (async function init() {
-    // Si no hay ID guardado, usar el DEFAULT
     if(!localStorage.getItem(LS_ID)) {
         localStorage.setItem(LS_ID, DEFAULT_ID);
     }
